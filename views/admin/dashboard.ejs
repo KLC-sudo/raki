@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — RAKI CMS</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="bg-[#1A1008] min-h-screen text-[#F5F0E8]">
+    <%- include('partials/nav', { page: 'dashboard' }) %>
+
+    <main class="ml-0 md:ml-60 p-6 md:p-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-3xl font-black uppercase tracking-tight">Dashboard</h1>
+                <p class="text-xs font-mono text-[#8B6E3C] mt-1">Manage your RAKI Coffee site</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <a href="/admin/products" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5 hover:border-[#C4A87A] transition-colors">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="package" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-2xl font-black"><%= counts.products %></span>
+                    </div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Products</p>
+                </a>
+                <a href="/admin/subscriptions" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5 hover:border-[#C4A87A] transition-colors">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="refresh-cw" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-2xl font-black"><%= counts.subscriptions %></span>
+                    </div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Subscriptions</p>
+                </a>
+                <a href="/admin/events" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5 hover:border-[#C4A87A] transition-colors">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="calendar" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-2xl font-black"><%= counts.events %></span>
+                    </div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Events</p>
+                </a>
+                <a href="/admin/trails" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5 hover:border-[#C4A87A] transition-colors">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="mountain" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-2xl font-black"><%= counts.trails %></span>
+                    </div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Trails</p>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                <a href="/admin/partners" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5 hover:border-[#C4A87A] transition-colors">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="handshake" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-2xl font-black"><%= counts.partners %></span>
+                    </div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Partners</p>
+                </a>
+                <a href="/admin/community" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5 hover:border-[#C4A87A] transition-colors">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="heart-handshake" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-2xl font-black"><%= counts.programs %></span>
+                    </div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Community</p>
+                </a>
+                <a href="/admin/outgrowers" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5 hover:border-[#C4A87A] transition-colors">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="map-pin" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-2xl font-black"><%= counts.outgrowers %></span>
+                    </div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Outgrowers</p>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                <a href="/admin/gallery" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5 hover:border-[#C4A87A] transition-colors">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="image" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-2xl font-black"><%= counts.gallery %></span>
+                    </div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Gallery</p>
+                </a>
+                <a href="/admin/settings" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5 hover:border-[#C4A87A] transition-colors flex items-center gap-4">
+                    <div class="w-12 h-12 bg-[#2D1F0E] rounded-md flex items-center justify-center">
+                        <i data-lucide="settings" class="w-6 h-6 text-[#C4A87A]"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold uppercase tracking-tight">Site Settings</p>
+                        <p class="text-[10px] font-mono text-[#8B6E3C]">Colors, fonts, layout, content</p>
+                    </div>
+                </a>
+                <a href="/admin/navigation" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5 hover:border-[#C4A87A] transition-colors flex items-center gap-4">
+                    <div class="w-12 h-12 bg-[#2D1F0E] rounded-md flex items-center justify-center">
+                        <i data-lucide="menu" class="w-6 h-6 text-[#C4A87A]"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold uppercase tracking-tight">Navigation</p>
+                        <p class="text-[10px] font-mono text-[#8B6E3C]">Menu items, ordering, visibility</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <a href="/admin/stats" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-6 hover:border-[#C4A87A] transition-colors flex items-center gap-4">
+                    <div class="w-12 h-12 bg-[#2D1F0E] rounded-md flex items-center justify-center">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6 text-[#C4A87A]"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold uppercase tracking-tight">Statistics</p>
+                        <p class="text-[10px] font-mono text-[#8B6E3C]">Numbers, metrics, impact data</p>
+                    </div>
+                </a>
+                <a href="/admin/footer" class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-6 hover:border-[#C4A87A] transition-colors flex items-center gap-4">
+                    <div class="w-12 h-12 bg-[#2D1F0E] rounded-md flex items-center justify-center">
+                        <i data-lucide="layout-template" class="w-6 h-6 text-[#C4A87A]"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold uppercase tracking-tight">Footer Links</p>
+                        <p class="text-[10px] font-mono text-[#8B6E3C]">Footer navigation, categories</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>lucide.createIcons({ attrs: { strokeWidth: 1.5 } });</script>
+</body>
+</html>

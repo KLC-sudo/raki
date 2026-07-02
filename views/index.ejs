@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= settings.site_name %> — Meraki</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <style>
+        :root {
+            --theme-bark-700: <%= settings.color_primary %>;
+            --theme-sand: <%= settings.color_accent %>;
+            --theme-cream: <%= settings.color_bg %>;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght<%= settings.heading_weight === '900' ? '/300;400;500;600;700;800;900' : '' %>&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-cream text-bark-700 antialiased">
+
+    <!-- NAVIGATION -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-cream border-b-2 border-bark-700">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#hero" class="flex items-center gap-3">
+                <% if (settings.site_logo) { %>
+                    <img src="<%= settings.site_logo %>" alt="<%= settings.site_name %>" class="h-10 w-auto">
+                <% } else { %>
+                    <div class="w-10 h-10 bg-bark-700 rounded-md flex items-center justify-center">
+                        <i data-lucide="coffee" class="w-5 h-5 text-sand"></i>
+                    </div>
+                <% } %>
+                <div>
+                    <span class="text-xl font-black tracking-tight text-bark-700 uppercase"><%= settings.site_name.replace(' Coffee Co.', '').replace(' Co.', '') %></span>
+                    <span class="block text-[9px] font-mono font-bold tracking-[0.25em] text-bark-400 uppercase -mt-0.5">coffee co.</span>
+                </div>
+            </a>
+
+            <div class="hidden md:flex items-center gap-1">
+                <% navigation.filter(n => !n.is_cta).forEach(function(item) { %>
+                    <a href="<%= item.href %>" class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-bark-600 hover:bg-bark-700 hover:text-sand rounded-md transition-colors"><%= item.label %></a>
+                <% }); %>
+                <% const ctaNav = navigation.find(n => n.is_cta); %>
+                <% if (ctaNav) { %>
+                    <a href="<%= ctaNav.href %>" class="ml-3 bg-bark-700 text-sand text-xs font-bold uppercase tracking-wider px-5 py-2.5 hover:bg-bark-800 rounded-md transition-colors border-2 border-bark-700"><%= ctaNav.label %></a>
+                <% } %>
+            </div>
+
+            <button id="mobile-toggle" class="md:hidden w-10 h-10 bg-bark-700 rounded-md flex items-center justify-center">
+                <i data-lucide="menu" class="w-5 h-5 text-sand"></i>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-bark-700 border-t-2 border-bark-800">
+            <div class="px-6 py-4 flex flex-col gap-0">
+                <% navigation.forEach(function(item) { %>
+                    <a href="<%= item.href %>" class="mobile-link py-3 text-sm font-bold uppercase tracking-wider text-sand border-b border-bark-600"><%= item.label %></a>
+                <% }); %>
+                <% if (ctaNav) { %>
+                    <a href="<%= ctaNav.href %>" class="mt-3 text-center bg-sand text-bark-700 text-sm font-bold uppercase tracking-wider px-6 py-3 rounded-md border-2 border-sand"><%= ctaNav.label %></a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <% if (settings.show_hero !== '0') { %>
+    <section id="hero" class="pt-20 bg-bark-700 text-sand min-h-screen flex flex-col justify-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-[0.06]" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23F5F0E8&quot; fill-opacity=&quot;1&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+
+        <div class="max-w-7xl mx-auto px-6 w-full relative z-10 py-16">
+            <div class="grid lg:grid-cols-12 gap-8 items-end">
+                <div class="lg:col-span-7">
+                    <div class="inline-flex items-center gap-2 border-2 border-bark-400 px-4 py-2 rounded-md mb-8">
+                        <span class="w-2 h-2 bg-bark-300 rounded-full animate-pulse"></span>
+                        <span class="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-bark-300"><%= settings.site_location %></span>
+                    </div>
+
+                    <h1 class="text-6xl md:text-8xl lg:text-[10rem] font-black leading-[0.85] tracking-tighter uppercase mb-6">
+                        <%= settings.hero_title_line1 %><br>
+                        <span class="text-bark-400"><%= settings.hero_title_line2 %></span>
+                    </h1>
+
+                    <p class="text-lg md:text-xl text-bark-300 leading-relaxed max-w-md mb-10 font-light">
+                        <%= settings.hero_description %>
+                    </p>
+
+                    <div class="flex flex-wrap gap-4">
+                        <a href="<%= settings.hero_cta_primary_link %>" class="inline-flex items-center gap-2 bg-sand text-bark-700 font-bold text-sm uppercase tracking-wider px-8 py-4 rounded-md border-2 border-sand hover:bg-transparent hover:text-sand transition-colors">
+                            <%= settings.hero_cta_primary %>
+                            <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+                        </a>
+                        <a href="<%= settings.hero_cta_secondary_link %>" class="inline-flex items-center gap-2 bg-transparent text-sand font-bold text-sm uppercase tracking-wider px-8 py-4 rounded-md border-2 border-bark-400 hover:border-sand transition-colors">
+                            <%= settings.hero_cta_secondary %>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 hidden lg:block">
+                    <div class="border-2 border-bark-400 rounded-lg p-6">
+                        <div class="grid grid-cols-2 gap-6">
+                            <% heroStats.forEach(function(stat, i) { %>
+                                <div class="<%= i < 2 ? 'border-b-2 border-bark-400 pb-4' : '' %>">
+                                    <div class="text-5xl font-black text-sand leading-none"><%= stat.value %></div>
+                                    <div class="text-[10px] font-mono font-bold uppercase tracking-widest text-bark-400 mt-2"><%= stat.label %></div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 border-2 border-bark-400 rounded-lg p-4 flex items-center gap-4">
+                        <div class="w-10 h-10 bg-bark-400 rounded-md flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="coffee" class="w-5 h-5 text-bark-700"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-black uppercase tracking-wider text-sand">Meraki Coffee</div>
+                            <div class="text-[10px] font-mono text-bark-400">Consultancy · Green Beans · Roasted Beans</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t-2 border-bark-400 mt-12 overflow-hidden">
+            <div class="marquee-track flex items-center whitespace-nowrap py-3">
+                <% var marqueeItems = (settings.marquee_items || '').split(','); %>
+                <% marqueeItems.concat(marqueeItems).forEach(function(item, i) { %>
+                    <% if (i > 0) { %><span class="text-bark-500 mx-2">✦</span><% } %>
+                    <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8"><%= item.trim() %></span>
+                <% }); %>
+            </div>
+        </div>
+
+        <% if (heroImages.length > 0) { %>
+        <div class="border-t-2 border-bark-400 overflow-hidden">
+            <div class="flex gap-0 animate-hero-scroll">
+                <% heroImages.concat(heroImages).forEach(function(img) { %>
+                    <div class="flex-shrink-0 w-[400px] h-[200px] border-r-2 border-bark-400 overflow-hidden">
+                        <img src="<%= img %>" alt="RAKI" class="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity duration-300">
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+        <% } %>
+    </section>
+    <% } %>
+
+    <!-- PRODUCTS -->
+    <% if (settings.show_products !== '0') { %>
+    <section id="products" class="py-20 md:py-28 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_products_label %></span>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_products_title.replace('\n', '<br>') %></h2>
+                </div>
+                <p class="text-sm text-bark-500 max-w-sm leading-relaxed"><%= settings.section_products_description %></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <% products.forEach(function(product, i) { %>
+                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden <%= product.badge === 'Featured' ? 'bg-bark-700 border-bark-700 hard-shadow-white' : '' %>">
+                        <div class="h-56 overflow-hidden border-b-2 <%= product.badge === 'Featured' ? 'border-bark-600' : 'border-bark-700' %>">
+                            <img src="<%= product.image_url %>" alt="<%= product.name %>" class="w-full h-full object-cover <%= product.badge === 'Featured' ? 'opacity-70' : '' %>">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-[9px] font-mono font-bold uppercase tracking-widest <%= product.badge === 'Featured' ? 'text-bark-300 bg-bark-600 border border-bark-500' : 'text-bark-400 bg-bark-50 border border-bark-200' %> px-2 py-1 rounded"><%= product.badge %></span>
+                                <span class="text-[9px] font-mono <%= product.badge === 'Featured' ? 'text-bark-400' : 'text-bark-400' %>"><%= String(i + 1).padStart(2, '0') %></span>
+                            </div>
+                            <h3 class="text-xl font-black tracking-tight uppercase mb-2 <%= product.badge === 'Featured' ? 'text-sand' : '' %>"><%= product.name %></h3>
+                            <p class="text-sm <%= product.badge === 'Featured' ? 'text-bark-300' : 'text-bark-500' %> leading-relaxed"><%= product.description %></p>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- MERAKI TRAIL -->
+    <% if (settings.show_trails !== '0') { %>
+<section id="meraki" class="py-20 md:py-28 bg-bark-700 text-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-14">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_trail_label %></span>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_trail_title.replace('\n', '<br>') %></h2>
+                <p class="text-sm text-bark-300 max-w-lg mt-4 leading-relaxed font-mono"><%= settings.section_trail_description %></p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <% trails.forEach(function(trail) { %>
+                    <div class="card-hover bg-cream text-bark-700 border-2 border-bark-700 rounded-lg <%= trail.is_popular ? 'hard-shadow relative md:-translate-y-4' : 'hard-shadow-sm' %>">
+                        <% if (trail.is_popular) { %>
+                            <div class="absolute -top-0 right-6 bg-bark-700 text-sand text-[9px] font-mono font-bold uppercase tracking-widest px-3 py-1.5 rounded-b-md">Popular</div>
+                        <% } %>
+                        <div class="p-6 border-b-2 border-bark-700 flex items-center justify-between">
+                            <div>
+                                <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Level 0<%= trail.level %></span>
+                                <h3 class="text-2xl font-black tracking-tight uppercase mt-1"><%= trail.name %></h3>
+                            </div>
+                            <div class="w-12 h-12 bg-bark-700 rounded-md flex items-center justify-center">
+                                <i data-lucide="<%= trail.level === 1 ? 'sprout' : trail.level === 2 ? 'trees' : 'mountain-snow' %>" class="w-6 h-6 text-sand"></i>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex gap-3 mb-5">
+                                <span class="text-[9px] font-mono font-bold uppercase tracking-wider text-bark-500 border border-bark-300 px-2 py-1 rounded"><%= trail.duration %></span>
+                                <span class="text-[9px] font-mono font-bold uppercase tracking-wider <%= trail.difficulty === 'Challenging' ? 'text-red-700 border-2 border-red-700 font-black' : 'text-bark-500 border border-bark-300' %> px-2 py-1 rounded"><%= trail.difficulty %></span>
+                            </div>
+                            <p class="text-sm text-bark-500 leading-relaxed mb-5"><%= trail.description %></p>
+                            <ul class="space-y-2 mb-6">
+                                <% (Array.isArray(trail.features) ? trail.features : []).forEach(function(f) { %>
+                                    <li class="flex items-center gap-2 text-sm text-bark-600">
+                                        <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> <%= f %>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                            <a href="#subscribe" class="inline-block w-full text-center bg-bark-700 text-sand font-bold text-xs uppercase tracking-wider py-3 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Book This Trail</a>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- OUR STORY -->
+    <% if (settings.show_story !== '0') { %>
+<section id="story" class="py-20 md:py-28 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                <div class="relative">
+                    <div class="border-2 border-bark-700 rounded-lg hard-shadow overflow-hidden">
+                        <img src="<%= settings.section_story_image %>" alt="RAKI Story" class="w-full h-[500px] object-cover">
+                    </div>
+                    <div class="absolute -bottom-6 -right-3 md:right-6 bg-bark-700 text-sand p-5 border-2 border-bark-700 rounded-lg hard-shadow-sand max-w-[240px]">
+                        <div class="flex items-center gap-3 mb-3 border-b border-bark-500 pb-3">
+                            <div class="w-8 h-8 bg-bark-400 rounded-md flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="coffee" class="w-4 h-4 text-bark-700"></i>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-sand">Meraki Coffee</div>
+                                <div class="text-[8px] font-mono text-bark-400"><%= settings.section_story_est %></div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] font-mono text-bark-300 leading-relaxed">Consultancy · Green Beans · Roasted Beans</div>
+                    </div>
+                </div>
+
+                <div class="lg:pt-8">
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_story_label %></span>
+                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%= settings.section_story_title.replace('\n', '<br>') %></h2>
+                    <div class="border-l-4 border-bark-700 pl-5 mb-6">
+                        <p class="text-bark-500 leading-relaxed"><%= settings.section_story_quote %></p>
+                    </div>
+                    <p class="text-sm text-bark-500 leading-relaxed mb-4"><%= settings.section_story_paragraph1 %></p>
+                    <p class="text-sm text-bark-500 leading-relaxed mb-8"><%= settings.section_story_paragraph2 %></p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="#community" class="bg-bark-700 text-sand font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Our Impact →</a>
+                        <a href="#events" class="bg-transparent text-bark-700 font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-md border-2 border-bark-700 hover:bg-bark-700 hover:text-sand transition-colors">Events</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- EVENTS -->
+    <% if (settings.show_events !== '0') { %>
+<section id="events" class="py-20 md:py-28 bg-bark-700 text-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_events_label %></span>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_events_title.replace('\n', '<br>') %></h2>
+                </div>
+                <p class="text-sm text-bark-300 max-w-sm leading-relaxed"><%= settings.section_events_description %></p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <% events.forEach(function(event) { %>
+                    <div class="group border-2 border-bark-500 rounded-lg hover:border-sand p-5 flex items-start gap-4 cursor-pointer transition-colors">
+                        <div class="flex-shrink-0 w-14 h-14 border-2 border-bark-500 rounded-md group-hover:border-sand flex flex-col items-center justify-center transition-colors">
+                            <span class="text-[8px] font-mono font-bold uppercase text-bark-400 group-hover:text-sand transition-colors"><%= event.event_month %></span>
+                            <span class="text-lg font-black leading-none text-sand"><%= event.event_day %></span>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold uppercase tracking-tight text-sand mb-1"><%= event.title %></h4>
+                            <p class="text-sm text-bark-400"><%= event.description %></p>
+                        </div>
+                        <i data-lucide="arrow-up-right" class="w-5 h-5 text-bark-500 group-hover:text-sand transition-colors flex-shrink-0 mt-1"></i>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- PARTNER -->
+    <% if (settings.show_partner !== '0') { %>
+<section id="partner" class="py-20 md:py-28 bg-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_partner_label %></span>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_partner_title.replace('\n', '<br>') %></h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <% partners.forEach(function(partner) { %>
+                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm p-6 text-center">
+                        <div class="w-14 h-14 bg-bark-700 rounded-md flex items-center justify-center mx-auto mb-5">
+                            <i data-lucide="<%= partner.icon %>" class="w-7 h-7 text-sand"></i>
+                        </div>
+                        <h3 class="text-sm font-black uppercase tracking-tight mb-2"><%= partner.name %></h3>
+                        <p class="text-xs text-bark-500 leading-relaxed"><%= partner.description %></p>
+                    </div>
+                <% }); %>
+            </div>
+
+            <div class="text-center mt-10">
+                <a href="#subscribe" class="bg-bark-700 text-sand font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors inline-block">Become a Partner →</a>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- COMMUNITY IMPACT -->
+    <% if (settings.show_community !== '0') { %>
+<section id="community" class="py-20 md:py-28 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-14">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_community_label %></span>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_community_title.replace('\n', '<br>') %></h2>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-6 mb-14">
+                <% programs.forEach(function(program, i) { %>
+                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                        <div class="h-64 overflow-hidden border-b-2 border-bark-700">
+                            <img src="<%= program.image_url %>" alt="<%= program.title %>" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="w-8 h-8 bg-bark-700 rounded-md flex items-center justify-center">
+                                    <i data-lucide="<%= program.icon %>" class="w-4 h-4 text-sand"></i>
+                                </div>
+                                <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Program <%= String(i + 1).padStart(2, '0') %></span>
+                            </div>
+                            <h3 class="text-xl font-black tracking-tight uppercase mb-2"><%= program.title %></h3>
+                            <p class="text-sm text-bark-500 leading-relaxed mb-4"><%= program.description %></p>
+                            <a href="#" class="text-xs font-bold uppercase tracking-wider text-bark-700 border-b-2 border-bark-700 hover:border-bark-400 hover:text-bark-400 transition-colors pb-0.5 inline-block">Learn More →</a>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <% communityStats.forEach(function(stat) { %>
+                    <div class="bg-bark-700 text-sand p-5 text-center border-2 border-bark-700 rounded-lg">
+                        <div class="text-3xl font-black leading-none mb-1"><%= stat.value %></div>
+                        <div class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-300"><%= stat.label %></div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- SUBSCRIPTION -->
+    <% if (settings.show_subscribe !== '0') { %>
+<section id="subscribe" class="py-20 md:py-28 bg-bark-700 text-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_subscribe_label %></span>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%= settings.section_subscribe_title.replace('\n', '<br>') %></h2>
+                    <p class="text-sm text-bark-300 max-w-md leading-relaxed mb-10"><%= settings.section_subscribe_description %></p>
+
+                    <div class="space-y-3">
+                        <% subscriptions.forEach(function(sub) { %>
+                            <div class="sub-plan border-2 <%= sub.is_popular ? 'border-sand bg-bark-600' : 'border-bark-500' %> rounded-lg p-5 cursor-pointer hover:border-sand transition-colors" onclick="selectSub(this, '<%= sub.slug %>')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 <%= sub.is_popular ? 'bg-sand' : 'border-2 border-bark-500' %> rounded-md flex items-center justify-center">
+                                            <i data-lucide="<%= sub.slug === 'starter' ? 'cup-soda' : sub.slug === 'family' ? 'coffee' : 'crown' %>" class="w-5 h-5 <%= sub.is_popular ? 'text-bark-700' : 'text-bark-300' %>"></i>
+                                        </div>
+                                        <div>
+                                            <span class="font-bold uppercase text-sm"><%= sub.name %></span>
+                                            <span class="block text-[9px] font-mono <%= sub.is_popular ? 'text-bark-300' : 'text-bark-400' %>"><%= sub.weight %> — <%= sub.description %></span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <% if (sub.is_popular) { %>
+                                            <span class="text-[8px] font-mono font-bold uppercase tracking-wider bg-sand text-bark-700 px-2 py-0.5 rounded mb-1 block">Best Value</span>
+                                        <% } %>
+                                        <span class="text-xl font-black">$<%= sub.price %><span class="text-xs font-mono font-normal <%= sub.is_popular ? 'text-bark-300' : 'text-bark-400' %>">/mo</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+
+                <div class="bg-cream text-bark-700 border-2 border-bark-700 rounded-lg p-8 hard-shadow-lg">
+                    <h3 class="text-2xl font-black uppercase tracking-tight mb-1"><%= settings.sub_form_title %></h3>
+                    <p class="text-xs text-bark-400 mb-6 font-mono"><%= settings.sub_form_description %></p>
+
+                    <form id="subscription-form" onsubmit="handleSub(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1.5">Full Name</label>
+                            <input type="text" required placeholder="Your name" class="w-full px-4 py-3 border-2 border-bark-700 rounded-md focus:border-bark-500 outline-none text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1.5">Email</label>
+                            <input type="email" required placeholder="you@example.com" class="w-full px-4 py-3 border-2 border-bark-700 rounded-md focus:border-bark-500 outline-none text-sm bg-white">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1.5">Plan</label>
+                                <select id="plan-select" class="w-full px-4 py-3 border-2 border-bark-700 rounded-md focus:border-bark-500 outline-none text-sm bg-white">
+                                    <% subscriptions.forEach(function(sub) { %>
+                                        <option value="<%= sub.slug %>" <%= sub.is_popular ? 'selected' : '' %>><%= sub.name %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1.5">Grind</label>
+                                <select class="w-full px-4 py-3 border-2 border-bark-700 rounded-md focus:border-bark-500 outline-none text-sm bg-white">
+                                    <option>Whole Bean</option>
+                                    <option>Fine</option>
+                                    <option>Medium</option>
+                                    <option>Coarse</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1.5">Delivery Address</label>
+                            <textarea required placeholder="Your address" rows="2" class="w-full px-4 py-3 border-2 border-bark-700 rounded-md focus:border-bark-500 outline-none text-sm bg-white resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-bark-700 text-sand font-bold text-sm uppercase tracking-wider py-4 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors flex items-center justify-center gap-2">
+                            Subscribe Now
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                    <div id="sub-success" class="hidden text-center py-10">
+                        <div class="w-16 h-16 bg-bark-700 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="check" class="w-8 h-8 text-sand"></i>
+                        </div>
+                        <h4 class="text-xl font-black uppercase tracking-tight mb-1">Welcome to <%= settings.site_name.replace(' Coffee Co.', '').replace(' Co.', '') %>!</h4>
+                        <p class="text-xs text-bark-400 font-mono">Your first box is on its way. Check your email.</p>
+                    </div>
+                    <p class="text-[9px] font-mono text-bark-400 mt-4 text-center uppercase tracking-wider">Cancel anytime · Free shipping · 100% guaranteed</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- SHOP -->
+    <% if (settings.show_shop !== '0') { %>
+<section id="buy" class="py-20 md:py-28 bg-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_buy_label %></span>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_buy_title.replace('\n', '<br>') %></h2>
+                </div>
+                <p class="text-sm text-bark-500 max-w-sm leading-relaxed"><%= settings.section_buy_description %></p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <% shopProducts.forEach(function(product) { %>
+                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                        <div class="h-64 bg-bark-50 border-b-2 border-bark-700 overflow-hidden">
+                            <img src="<%= product.image_url %>" alt="<%= product.name %>" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-5 border-b-2 border-bark-200">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400"><%= product.badge %></span>
+                            <h3 class="text-lg font-black uppercase tracking-tight mt-0.5"><%= product.name %></h3>
+                            <p class="text-xs text-bark-500 mt-1"><%= product.description %></p>
+                        </div>
+                        <div class="p-5 flex items-center justify-between">
+                            <span class="text-2xl font-black">$<%= product.price %></span>
+                            <button onclick="addCart('<%= product.name %>')" class="bg-bark-700 text-sand font-bold text-[10px] uppercase tracking-wider px-5 py-2.5 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Add to Cart</button>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- LOCATION -->
+    <% if (settings.show_location !== '0') { %>
+<section id="location" class="py-20 md:py-28 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_location_label %></span>
+                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%= settings.section_location_title %></h2>
+                    <p class="text-sm text-bark-500 leading-relaxed mb-8"><%= settings.section_location_description %></p>
+
+                    <div class="border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden mb-8 h-72 relative bg-bark-100">
+                        <img src="https://picsum.photos/seed/uganda-landscape-green/700/350.jpg" alt="Location" class="w-full h-full object-cover opacity-60">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-14 h-14 bg-bark-700 rounded-md flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="map-pin" class="w-7 h-7 text-sand"></i>
+                                </div>
+                                <p class="text-sm font-black uppercase text-bark-700"><%= settings.site_name %></p>
+                                <p class="text-[9px] font-mono text-bark-500">Near Sezibwa Falls, Mukono</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="border-2 border-bark-700 rounded-md p-4">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-bark-500 mb-2"></i>
+                            <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1">Address</p>
+                            <p class="text-xs text-bark-600"><%= settings.site_address %></p>
+                        </div>
+                        <div class="border-2 border-bark-700 rounded-md p-4">
+                            <i data-lucide="phone" class="w-4 h-4 text-bark-500 mb-2"></i>
+                            <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1">Phone</p>
+                            <p class="text-xs text-bark-600"><%= settings.site_phone %></p>
+                        </div>
+                        <div class="border-2 border-bark-700 rounded-md p-4">
+                            <i data-lucide="mail" class="w-4 h-4 text-bark-500 mb-2"></i>
+                            <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1">Email</p>
+                            <p class="text-xs text-bark-600"><%= settings.site_email %></p>
+                        </div>
+                        <div class="border-2 border-bark-700 rounded-md p-4">
+                            <i data-lucide="clock" class="w-4 h-4 text-bark-500 mb-2"></i>
+                            <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1">Hours</p>
+                            <p class="text-xs text-bark-600"><%= settings.site_hours %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_outgrowers_label %></span>
+                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%= settings.section_outgrowers_title %></h2>
+                    <p class="text-sm text-bark-500 leading-relaxed mb-8"><%= settings.section_outgrowers_description %></p>
+
+                    <div class="space-y-3">
+                        <% outgrowers.forEach(function(og) { %>
+                            <div class="group border-2 border-bark-700 rounded-md p-4 flex items-center gap-4 cursor-pointer hover:bg-bark-700 hover:text-sand transition-colors">
+                                <div class="w-10 h-10 bg-bark-700 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-sand transition-colors">
+                                    <i data-lucide="<%= og.icon %>" class="w-5 h-5 text-sand group-hover:text-bark-700 transition-colors"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-sm uppercase tracking-tight"><%= og.name %></h4>
+                                    <p class="text-[9px] font-mono text-bark-400 group-hover:text-bark-300 transition-colors"><%= og.region %> — <%= og.description %></p>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-bark-400 group-hover:text-sand transition-colors"></i>
+                            </div>
+                        <% }); %>
+                    </div>
+
+                    <div class="mt-6 border-2 border-bark-700 rounded-md p-5 bg-bark-700 text-sand">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="info" class="w-5 h-5 text-bark-300 mt-0.5 flex-shrink-0"></i>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider mb-1">Become an outgrower?</p>
+                                <p class="text-[10px] font-mono text-bark-300">Seedlings, training, guaranteed fair-trade purchases. <a href="#partner" class="underline text-sand hover:text-bark-200">Partner with us →</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- GALLERY -->
+    <% if (gallery.length > 0 && settings.show_gallery !== '0') { %>
+<section id="gallery" class="py-20 md:py-28 bg-bark-700 text-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_gallery_label %></span>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_gallery_title.replace('\n', '<br>') %></h2>
+                </div>
+                <p class="text-sm text-bark-300 max-w-sm leading-relaxed"><%= settings.section_gallery_description %></p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <% gallery.forEach(function(item, i) { %>
+                    <div class="group relative overflow-hidden rounded-lg border-2 border-bark-500 hover:border-sand transition-colors cursor-pointer" style="<%= i === 0 ? 'grid-column: span 2; grid-row: span 2;' : '' %>">
+                        <img src="<%= item.image_url %>" alt="<%= item.title %>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" style="<%= i === 0 ? 'min-height: 100%;' : 'min-height: 200px;' %>">
+                        <div class="absolute inset-0 bg-gradient-to-t from-bark-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                            <div>
+                                <% if (item.category) { %>
+                                    <span class="text-[8px] font-mono font-bold uppercase tracking-widest text-bark-300 bg-bark-700/80 px-2 py-1 rounded mb-2 inline-block"><%= item.category %></span>
+                                <% } %>
+                                <h4 class="font-bold uppercase tracking-tight text-sand text-sm"><%= item.title %></h4>
+                                <% if (item.description) { %>
+                                    <p class="text-[10px] font-mono text-bark-300 mt-1"><%= item.description %></p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- CTA STRIP -->
+    <% if (settings.show_cta !== '0') { %>
+<section class="py-12 bg-bark-700 border-y-2 border-bark-400">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-sand leading-none"><%= settings.section_cta_title %></h2>
+                <p class="text-sm text-bark-300 mt-1 font-mono"><%= settings.section_cta_subtitle %></p>
+            </div>
+            <div class="flex gap-3">
+                <a href="<%= settings.cta_primary_link %>" class="bg-sand text-bark-700 font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-md border-2 border-sand hover:bg-transparent hover:text-sand transition-colors"><%= settings.cta_primary_text %></a>
+                <a href="<%= settings.cta_secondary_link %>" class="bg-transparent text-sand font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-md border-2 border-sand hover:bg-sand hover:text-bark-700 transition-colors"><%= settings.cta_secondary_text %></a>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- FOOTER -->
+    <footer class="bg-bark-900 text-bark-300 pt-14 pb-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+                <div class="col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <% if (settings.site_logo) { %>
+                            <img src="<%= settings.site_logo %>" alt="<%= settings.site_name %>" class="h-10 w-auto">
+                        <% } else { %>
+                            <div class="w-10 h-10 bg-sand rounded-md flex items-center justify-center">
+                                <i data-lucide="coffee" class="w-5 h-5 text-bark-700"></i>
+                            </div>
+                        <% } %>
+                        <div>
+                            <span class="text-xl font-black tracking-tight text-sand uppercase"><%= settings.site_name.replace(' Coffee Co.', '').replace(' Co.', '') %></span>
+                            <span class="block text-[8px] font-mono font-bold tracking-[0.3em] text-bark-400 uppercase -mt-0.5">coffee co.</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-bark-500 leading-relaxed mb-4 max-w-xs font-mono"><%= settings.site_tagline %> — <%= settings.site_description %></p>
+                    <div class="flex gap-2">
+                        <a href="<%= settings.social_instagram %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="instagram" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_twitter %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="twitter" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_facebook %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="facebook" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_youtube %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="youtube" class="w-3.5 h-3.5"></i></a>
+                    </div>
+                </div>
+
+                <% Object.keys(footerGrouped).forEach(function(category) { %>
+                    <div>
+                        <h4 class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-3"><%= category %></h4>
+                        <ul class="space-y-1.5">
+                            <% footerGrouped[category].forEach(function(link) { %>
+                                <li><a href="<%= link.href %>" class="text-xs text-bark-500 hover:text-sand transition-colors"><%= link.label %></a></li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                <% }); %>
+            </div>
+
+            <div class="border-t-2 border-bark-700 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-[9px] font-mono text-bark-600 uppercase tracking-wider">© <%= settings.copyright %></p>
+                <div class="flex items-center gap-4">
+                    <p class="text-[9px] font-mono text-bark-600"><%= settings.site_ceo %></p>
+                    <span class="text-bark-700">|</span>
+                    <p class="text-[9px] font-mono text-bark-600"><%= settings.site_phone %></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- TOAST -->
+    <div id="toast" class="fixed bottom-6 left-6 z-50 transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none">
+        <div class="bg-bark-700 text-sand px-6 py-4 border-2 border-bark-600 rounded-md flex items-center gap-3 max-w-sm">
+            <i data-lucide="check" class="w-4 h-4 text-sand flex-shrink-0"></i>
+            <span id="toast-msg" class="text-xs font-bold uppercase tracking-wider"></span>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
