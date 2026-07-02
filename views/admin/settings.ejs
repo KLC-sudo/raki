@@ -198,6 +198,26 @@
         })
         .catch(e => showToast('Error saving settings'));
     }
+    function filterSettingsByHash() {
+        const hash = window.location.hash.replace('#', '');
+        const cards = document.querySelectorAll('#settings-form .cms-card');
+        if (hash === 'visibility') {
+            cards.forEach(card => {
+                card.style.display = card.id === 'visibility' ? '' : 'none';
+            });
+        } else if (hash) {
+            cards.forEach(card => {
+                card.style.display = card.id === hash ? '' : 'none';
+            });
+        } else {
+            cards.forEach(card => {
+                card.style.display = card.id === 'visibility' ? 'none' : '';
+            });
+        }
+    }
+
+    filterSettingsByHash();
+    window.addEventListener('hashchange', filterSettingsByHash);
     </script>
 </body>
 </html>
