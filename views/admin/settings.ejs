@@ -198,21 +198,40 @@
         })
         .catch(e => showToast('Error saving settings'));
     }
+    </script>
+
+    <script>
     function filterSettingsByHash() {
-        const hash = window.location.hash.replace('#', '');
-        const cards = document.querySelectorAll('#settings-form .cms-card');
+        var hash = window.location.hash.replace('#', '');
+        var cards = document.querySelectorAll('#settings-form .cms-card');
         if (hash === 'visibility') {
-            cards.forEach(card => {
+            cards.forEach(function(card) {
                 card.style.display = card.id === 'visibility' ? '' : 'none';
             });
         } else if (hash) {
-            cards.forEach(card => {
+            cards.forEach(function(card) {
                 card.style.display = card.id === hash ? '' : 'none';
             });
         } else {
-            cards.forEach(card => {
+            cards.forEach(function(card) {
                 card.style.display = card.id === 'visibility' ? 'none' : '';
             });
+        }
+
+        var visNav = document.getElementById('nav-visibility');
+        var setNav = document.getElementById('nav-settings');
+        if (visNav && setNav) {
+            visNav.classList.remove('bg-[#4A3518]', 'text-[#F5F0E8]');
+            visNav.classList.add('text-[#8B6E3C]');
+            setNav.classList.remove('bg-[#4A3518]', 'text-[#F5F0E8]');
+            setNav.classList.add('text-[#8B6E3C]');
+            if (hash === 'visibility') {
+                visNav.classList.add('bg-[#4A3518]', 'text-[#F5F0E8]');
+                visNav.classList.remove('text-[#8B6E3C]');
+            } else {
+                setNav.classList.add('bg-[#4A3518]', 'text-[#F5F0E8]');
+                setNav.classList.remove('text-[#8B6E3C]');
+            }
         }
     }
 
