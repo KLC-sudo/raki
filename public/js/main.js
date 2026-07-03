@@ -62,3 +62,41 @@ document.querySelectorAll('section').forEach(s => {
 });
 document.getElementById('hero').style.opacity = '1';
 document.getElementById('hero').style.transform = 'translateY(0)';
+
+// Analytics: track time on page
+(function() {
+    var visitorId = typeof window.visitorId !== 'undefined' ? window.visitorId : null;
+    if (!visitorId) {
+        var meta = document.querySelector('meta[name="visitor-id"]');
+        if (meta) visitorId = meta.content;
+    }
+    if (!visitorId) return;
+
+    var startTime = Date.now();
+
+    function sendHeartbeat() {
+        var duration = Math.round((Date.now() - startTime) / 1000);
+        if (duration < 2) return;
+        try {
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon('/api/analytics/heartbeat', JSON.stringify({
+                    visitorId: parseInt(visitorId),
+                    duration: duration
+                }));
+            } else {
+                fetch('/api/analytics/heartbeat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ visitorId: parseInt(visitorId), duration: duration }),
+                    keepalive: true
+                });
+            }
+        } catch (e) {}
+    }
+
+    window.addEventListener('beforeunload', sendHeartbeat);
+    window.addEventListener('pagehide', sendHeartbeat);
+    setInterval(function() {
+        if (document.visibilityState === 'visible') sendHeartbeat();
+    }, 30000);
+})();

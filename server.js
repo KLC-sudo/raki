@@ -7,6 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const { getAll, getWhere, findById, insert, update, remove, readDb } = require('./db/store');
 const { requireAuth } = require('./middleware/auth');
+const { trackVisit, updateSessionTime, getAnalyticsSummary, getRecentVisitors, getVisitorPages } = require('./db/analytics');
 
 // Auto-seed on first run (e.g. Railway deploy)
 const DATA_DIR = path.join(__dirname, 'data');
@@ -70,6 +71,30 @@ function getSettings() {
   (db.settings || []).forEach(s => settings[s.key] = s.value);
   return settings;
 }
+
+// Analytics: track public page visits (skip admin, API, static, uploads)
+app.use((req, res, next) => {
+  if (req.method !== 'GET') return next();
+  if (req.path.startsWith('/admin') || req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
+  if (req.path.match(/\.\w+$/)) return next();
+  try {
+    const visitorId = trackVisit(req);
+    req.visitorId = visitorId;
+    res.locals.visitorId = visitorId;
+  } catch (e) {
+    console.error('Analytics error:', e.message);
+  }
+  next();
+});
+
+// Analytics: track session time on page unload (client sends beacon)
+app.post('/api/analytics/heartbeat', express.json(), (req, res) => {
+  const { visitorId, duration } = req.body;
+  if (visitorId && duration) {
+    try { updateSessionTime(visitorId, duration); } catch (e) {}
+  }
+  res.json({ ok: true });
+});
 
 // ========== PUBLIC ROUTES ==========
 
@@ -307,6 +332,29 @@ app.get('/admin/stats', requireAuth, renderAdminSection('stats', 'Statistics'));
 app.get('/admin/navigation', requireAuth, renderAdminSection('navigation', 'Navigation'));
 app.get('/admin/footer', requireAuth, renderAdminSection('footer_links', 'Footer Links'));
 app.get('/admin/gallery', requireAuth, renderAdminSection('gallery', 'Gallery'));
+
+// ========== ADMIN: ANALYTICS ==========
+app.get('/admin/analytics', requireAuth, (req, res) => {
+  const summary = getAnalyticsSummary();
+  const visitors = getRecentVisitors(50);
+  res.render('admin/analytics', { summary, visitors });
+});
+
+// ========== API: ANALYTICS ==========
+app.get('/api/analytics/summary', requireAuth, (req, res) => {
+  res.json(getAnalyticsSummary());
+});
+
+app.get('/api/analytics/visitors', requireAuth, (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit) || 50, 200);
+  res.json(getRecentVisitors(limit));
+});
+
+app.get('/api/analytics/visitor/:id', requireAuth, (req, res) => {
+  if (!/^\d+$/.test(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
+  const pages = getVisitorPages(parseInt(req.params.id));
+  res.json(pages);
+});
 
 // Change password
 app.post('/admin/change-password', requireAuth, (req, res) => {

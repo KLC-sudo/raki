@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics — RAKI CMS</title>
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="bg-[#1A1008] min-h-screen text-[#F5F0E8]">
+    <%- include('partials/nav', { page: 'analytics' }) %>
+
+    <main class="ml-0 md:ml-60 p-6 md:p-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-3xl font-black uppercase tracking-tight">Analytics</h1>
+                <p class="text-xs font-mono text-[#8B6E3C] mt-1">Visitor tracking &amp; site activity</p>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="users" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-[8px] font-mono text-[#8B6E3C]">TOTAL</span>
+                    </div>
+                    <div class="text-3xl font-black"><%= summary.total.visitors %></div>
+                    <p class="text-[9px] font-mono text-[#8B6E3C] uppercase tracking-wider mt-1">Total Visitors</p>
+                </div>
+                <div class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="eye" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-[8px] font-mono text-[#8B6E3C]">TOTAL</span>
+                    </div>
+                    <div class="text-3xl font-black"><%= summary.total.pageviews %></div>
+                    <p class="text-[9px] font-mono text-[#8B6E3C] uppercase tracking-wider mt-1">Total Pageviews</p>
+                </div>
+                <div class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="user-check" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-[8px] font-mono text-[#8B6E3C]">TODAY</span>
+                    </div>
+                    <div class="text-3xl font-black"><%= summary.today.visitors %></div>
+                    <p class="text-[9px] font-mono text-[#8B6E3C] uppercase tracking-wider mt-1">Today's Visitors</p>
+                </div>
+                <div class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <i data-lucide="file-text" class="w-5 h-5 text-[#C4A87A]"></i>
+                        <span class="text-[8px] font-mono text-[#8B6E3C]">TODAY</span>
+                    </div>
+                    <div class="text-3xl font-black"><%= summary.today.pageviews %></div>
+                    <p class="text-[9px] font-mono text-[#8B6E3C] uppercase tracking-wider mt-1">Today's Pageviews</p>
+                </div>
+            </div>
+
+            <!-- Period Stats -->
+            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-[#2D1F0E] border-2 border-[#4A3518] rounded-lg p-5">
+                    <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] mb-2">This Week</p>
+                    <div class="flex items-baseline gap-3">
+                        <span class="text-2xl font-black"><%= summary.thisWeek.visitors %></span>
+                        <span class="text-[10px] font-mono text-[#8B6E3C]">visitors</span>
+                        <span class="text-[10px] font-mono text-[#6B4E26]">·</span>
+                        <span class="text-2xl font-black"><%= summary.thisWeek.pageviews %></span>
+                        <span class="text-[10px] font-mono text-[#8B6E3C]">views</span>
+                    </div>
+                </div>
+                <div class="bg-[#2D1F0E] border-2 border-[#4A3518] rounded-lg p-5">
+                    <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] mb-2">This Month</p>
+                    <div class="flex items-baseline gap-3">
+                        <span class="text-2xl font-black"><%= summary.thisMonth.visitors %></span>
+                        <span class="text-[10px] font-mono text-[#8B6E3C]">visitors</span>
+                        <span class="text-[10px] font-mono text-[#6B4E26]">·</span>
+                        <span class="text-2xl font-black"><%= summary.thisMonth.pageviews %></span>
+                        <span class="text-[10px] font-mono text-[#8B6E3C]">views</span>
+                    </div>
+                </div>
+                <div class="bg-[#2D1F0E] border-2 border-[#4A3518] rounded-lg p-5">
+                    <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] mb-2">Avg. Time on Site</p>
+                    <div class="flex items-baseline gap-3">
+                        <span class="text-2xl font-black"><%= summary.avgTimeSeconds %>s</span>
+                        <span class="text-[10px] font-mono text-[#8B6E3C]">per visitor</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid md:grid-cols-2 gap-4 mb-8">
+                <!-- Top Pages -->
+                <div class="bg-[#2D1F0E] border-2 border-[#4A3518] rounded-lg p-5">
+                    <h3 class="text-xs font-black uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4 text-[#C4A87A]"></i> Top Pages
+                    </h3>
+                    <div class="space-y-2">
+                        <% summary.topPages.forEach(function(page) { %>
+                            <div class="flex items-center gap-3">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[10px] font-mono text-[#F5F0E8] truncate"><%= page[0] %></p>
+                                </div>
+                                <span class="text-xs font-bold text-[#C4A87A]"><%= page[1] %></span>
+                                <div class="w-20 h-1.5 bg-[#1A1008] rounded-full overflow-hidden">
+                                    <div class="h-full bg-[#C4A87A] rounded-full" style="width: <%= summary.topPages.length > 0 ? Math.round(page[1] / summary.topPages[0][1] * 100) : 0 %>%"></div>
+                                </div>
+                            </div>
+                        <% }); %>
+                        <% if (summary.topPages.length === 0) { %>
+                            <p class="text-[10px] font-mono text-[#6B4E26]">No data yet</p>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Top Referrers -->
+                <div class="bg-[#2D1F0E] border-2 border-[#4A3518] rounded-lg p-5">
+                    <h3 class="text-xs font-black uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i data-lucide="external-link" class="w-4 h-4 text-[#C4A87A]"></i> Top Referrers
+                    </h3>
+                    <div class="space-y-2">
+                        <% summary.topReferrers.forEach(function(ref) { %>
+                            <div class="flex items-center gap-3">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[10px] font-mono text-[#F5F0E8] truncate"><%= ref[0] %></p>
+                                </div>
+                                <span class="text-xs font-bold text-[#C4A87A]"><%= ref[1] %></span>
+                                <div class="w-20 h-1.5 bg-[#1A1008] rounded-full overflow-hidden">
+                                    <div class="h-full bg-[#C4A87A] rounded-full" style="width: <%= summary.topReferrers.length > 0 ? Math.round(ref[1] / summary.topReferrers[0][1] * 100) : 0 %>%"></div>
+                                </div>
+                            </div>
+                        <% }); %>
+                        <% if (summary.topReferrers.length === 0) { %>
+                            <p class="text-[10px] font-mono text-[#6B4E26]">No data yet</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browser / OS / Device -->
+            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-[#2D1F0E] border-2 border-[#4A3518] rounded-lg p-5">
+                    <h3 class="text-xs font-black uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i data-lucide="globe" class="w-4 h-4 text-[#C4A87A]"></i> Browsers
+                    </h3>
+                    <div class="space-y-2">
+                        <% Object.entries(summary.browsers).sort((a,b) => b[1] - a[1]).forEach(function(b) { %>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-mono text-[#F5F0E8]"><%= b[0] %></span>
+                                <span class="text-xs font-bold text-[#C4A87A]"><%= b[1] %></span>
+                            </div>
+                        <% }); %>
+                        <% if (Object.keys(summary.browsers).length === 0) { %>
+                            <p class="text-[10px] font-mono text-[#6B4E26]">No data yet</p>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="bg-[#2D1F0E] border-2 border-[#4A3518] rounded-lg p-5">
+                    <h3 class="text-xs font-black uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i data-lucide="monitor" class="w-4 h-4 text-[#C4A87A]"></i> Operating Systems
+                    </h3>
+                    <div class="space-y-2">
+                        <% Object.entries(summary.os).sort((a,b) => b[1] - a[1]).forEach(function(o) { %>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-mono text-[#F5F0E8]"><%= o[0] %></span>
+                                <span class="text-xs font-bold text-[#C4A87A]"><%= o[1] %></span>
+                            </div>
+                        <% }); %>
+                        <% if (Object.keys(summary.os).length === 0) { %>
+                            <p class="text-[10px] font-mono text-[#6B4E26]">No data yet</p>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="bg-[#2D1F0E] border-2 border-[#4A3518] rounded-lg p-5">
+                    <h3 class="text-xs font-black uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i data-lucide="smartphone" class="w-4 h-4 text-[#C4A87A]"></i> Devices
+                    </h3>
+                    <div class="space-y-2">
+                        <% Object.entries(summary.devices).sort((a,b) => b[1] - a[1]).forEach(function(d) { %>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-mono text-[#F5F0E8]"><%= d[0] %></span>
+                                <span class="text-xs font-bold text-[#C4A87A]"><%= d[1] %></span>
+                            </div>
+                        <% }); %>
+                        <% if (Object.keys(summary.devices).length === 0) { %>
+                            <p class="text-[10px] font-mono text-[#6B4E26]">No data yet</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hourly Activity Today -->
+            <div class="bg-[#2D1F0E] border-2 border-[#4A3518] rounded-lg p-5 mb-8">
+                <h3 class="text-xs font-black uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i data-lucide="clock" class="w-4 h-4 text-[#C4A87A]"></i> Hourly Activity (Today)
+                </h3>
+                <div class="flex items-end gap-1 h-24">
+                    <% var maxHour = Math.max(...summary.hourlyToday, 1); %>
+                    <% summary.hourlyToday.forEach(function(count, hour) { %>
+                        <div class="flex-1 flex flex-col items-center gap-1">
+                            <div class="w-full bg-[#C4A87A] rounded-t" style="height: <%= Math.round(count / maxHour * 80) %>px; min-height: <%= count > 0 ? '4px' : '0' %>;"></div>
+                            <span class="text-[7px] font-mono text-[#6B4E26]"><%= hour %></span>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+
+            <!-- Recent Visitors -->
+            <div class="bg-[#2D1F0E] border-2 border-[#4A3518] rounded-lg p-5">
+                <h3 class="text-xs font-black uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i data-lucide="users" class="w-4 h-4 text-[#C4A87A]"></i> Recent Visitors
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-[#4A3518]">
+                                <th class="text-[8px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] pb-3 pr-4">ID</th>
+                                <th class="text-[8px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] pb-3 pr-4">Browser</th>
+                                <th class="text-[8px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] pb-3 pr-4">OS</th>
+                                <th class="text-[8px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] pb-3 pr-4">Device</th>
+                                <th class="text-[8px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] pb-3 pr-4">Referrer</th>
+                                <th class="text-[8px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] pb-3 pr-4">Pages</th>
+                                <th class="text-[8px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] pb-3 pr-4">Visits</th>
+                                <th class="text-[8px] font-mono font-bold uppercase tracking-widest text-[#6B4E26] pb-3 pr-4">Last Seen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% visitors.forEach(function(v) { %>
+                                <tr class="border-b border-[#4A3518]/50 hover:bg-[#4A3518]/30 cursor-pointer" onclick="showVisitorPages(<%= v.id %>)">
+                                    <td class="py-2.5 pr-4 text-[10px] font-mono text-[#8B6E3C]">#<%= v.id %></td>
+                                    <td class="py-2.5 pr-4 text-[10px] font-mono text-[#F5F0E8]"><%= v.browser %></td>
+                                    <td class="py-2.5 pr-4 text-[10px] font-mono text-[#F5F0E8]"><%= v.os %></td>
+                                    <td class="py-2.5 pr-4 text-[10px] font-mono text-[#F5F0E8]"><%= v.device %></td>
+                                    <td class="py-2.5 pr-4 text-[10px] font-mono text-[#C4A87A] truncate max-w-[120px]"><%= v.referrer %></td>
+                                    <td class="py-2.5 pr-4 text-[10px] font-mono text-[#F5F0E8]"><%= v.pages_viewed %></td>
+                                    <td class="py-2.5 pr-4 text-[10px] font-mono text-[#F5F0E8]"><%= v.visit_count %></td>
+                                    <td class="py-2.5 pr-4 text-[10px] font-mono text-[#8B6E3C]"><%= new Date(v.last_visit).toLocaleString() %></td>
+                                </tr>
+                            <% }); %>
+                            <% if (visitors.length === 0) { %>
+                                <tr><td colspan="8" class="py-8 text-center text-[10px] font-mono text-[#6B4E26]">No visitors yet</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Visitor Pages Modal -->
+    <div id="modal" class="cms-modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="cms-modal" style="max-width: 600px;">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-black uppercase tracking-tight">Visitor #<span id="modal-visitor-id"></span> Pages</h2>
+                <button onclick="closeModal()" class="w-8 h-8 border border-[#6B4E26] rounded flex items-center justify-center hover:bg-[#4A3518] transition-colors">
+                    <i data-lucide="x" class="w-4 h-4 text-[#8B6E3C]"></i>
+                </button>
+            </div>
+            <div id="modal-pages" class="space-y-2 max-h-96 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+    lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+
+    function showVisitorPages(id) {
+        document.getElementById('modal-visitor-id').textContent = id;
+        document.getElementById('modal-pages').innerHTML = '<p class="text-[10px] font-mono text-[#6B4E26]">Loading...</p>';
+        document.getElementById('modal').classList.add('active');
+
+        fetch('/api/analytics/visitor/' + id, {
+            headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content },
+            credentials: 'include'
+        })
+        .then(r => r.json())
+        .then(pages => {
+            if (pages.length === 0) {
+                document.getElementById('modal-pages').innerHTML = '<p class="text-[10px] font-mono text-[#6B4E26]">No pages recorded</p>';
+                return;
+            }
+            document.getElementById('modal-pages').innerHTML = pages.map(p =>
+                '<div class="flex items-center gap-3 py-2 border-b border-[#4A3518]/50">' +
+                '<span class="text-[10px] font-mono text-[#8B6E3C] w-36 flex-shrink-0">' + new Date(p.timestamp).toLocaleString() + '</span>' +
+                '<span class="text-[10px] font-mono text-[#F5F0E8] truncate">' + p.page + '</span>' +
+                '</div>'
+            ).join('');
+        })
+        .catch(() => {
+            document.getElementById('modal-pages').innerHTML = '<p class="text-[10px] font-mono text-red-400">Error loading pages</p>';
+        });
+    }
+
+    function closeModal() {
+        document.getElementById('modal').classList.remove('active');
+    }
+    </script>
+</body>
+</html>
