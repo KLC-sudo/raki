@@ -668,6 +668,10 @@
                     <p class="text-[9px] font-mono text-bark-600"><%= settings.site_ceo %></p>
                     <span class="text-bark-700">|</span>
                     <p class="text-[9px] font-mono text-bark-600"><%= settings.site_phone %></p>
+                    <span class="text-bark-700">|</span>
+                    <button id="admin-triple" onclick="adminTripleClick()" class="text-[8px] font-mono text-bark-700 opacity-20 hover:opacity-60 transition-opacity cursor-default select-none" title="·">
+                        ·
+                    </button>
                 </div>
             </div>
         </div>
@@ -682,5 +686,25 @@
     </div>
 
     <script src="/js/main.js"></script>
+    <script>
+    (function() {
+        var clicks = 0;
+        var timer = null;
+        window.adminTripleClick = function() {
+            clicks++;
+            if (clicks >= 3) {
+                window.location.href = '/admin/login';
+                return;
+            }
+            var btn = document.getElementById('admin-triple');
+            if (btn) {
+                btn.style.opacity = String(0.2 + clicks * 0.25);
+                btn.style.cursor = 'pointer';
+            }
+            clearTimeout(timer);
+            timer = setTimeout(function() { clicks = 0; if (btn) { btn.style.opacity = '0.2'; btn.style.cursor = 'default'; } }, 2000);
+        };
+    })();
+    </script>
 </body>
 </html>
