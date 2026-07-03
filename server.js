@@ -49,14 +49,13 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use((req, res, next) => {
   if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
     return next();
   }
-  express.json()(req, res, (err) => {
-    if (err) return next(err);
-    express.urlencoded({ extended: true })(req, res, next);
-  });
+  next();
 });
 app.use(session({
   secret: process.env.SESSION_SECRET || 'raki-coffee-secret-2025',
