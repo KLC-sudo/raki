@@ -7,6 +7,7 @@ const DATA_DIR = path.join(__dirname, '..', 'data');
 const ANALYTICS_FILE = path.join(DATA_DIR, 'analytics.json');
 
 function ensureAnalyticsFile() {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
   if (!fs.existsSync(ANALYTICS_FILE)) {
     fs.writeFileSync(ANALYTICS_FILE, JSON.stringify({ visitors: [], pageviews: [] }, null, 2));
   }
