@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings — RAKI CMS</title>
-    <meta name="csrf-token" content="<%= csrfToken %>">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="/css/tailwind.css">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -122,12 +121,7 @@
         compressImage(file, 800, 0.85).then(blob => {
             const formData = new FormData();
             formData.append('image', blob, file.name);
-            return fetch('/api/upload', {
-                method: 'POST',
-                headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content },
-                body: formData,
-                credentials: 'include'
-            });
+            return fetch('/api/upload', { method: 'POST', body: formData, credentials: 'include' });
         })
         .then(r => r.json())
         .then(data => {
@@ -194,10 +188,7 @@
 
         fetch('/api/settings', {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-            },
+            headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify(items)
         })

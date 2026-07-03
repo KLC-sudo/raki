@@ -3,7 +3,6 @@ const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const sharp = require('sharp');
-const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
 const { getAll, getWhere, findById, insert, update, remove, readDb } = require('./db/store');
@@ -58,19 +57,11 @@ app.use((req, res, next) => {
   });
 });
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'raki-coffee-secret-2025',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
+  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
-
-if (!process.env.SESSION_SECRET) {
-  console.error('FATAL: SESSION_SECRET environment variable is required.');
-  process.exit(1);
-}
-
-// Security: CSRF protection on all routes
-app.use(csrfProtection);
 
 // Helper: get all settings as object
 function getSettings() {
@@ -78,68 +69,6 @@ function getSettings() {
   const settings = {};
   (db.settings || []).forEach(s => settings[s.key] = s.value);
   return settings;
-}
-
-// Security: Simple in-memory rate limiter
-const loginAttempts = new Map();
-function rateLimitLogin(req, res, next) {
-  const ip = req.ip;
-  const now = Date.now();
-  const windowMs = 15 * 60 * 1000;
-  const maxAttempts = 5;
-  const attempts = (loginAttempts.get(ip) || []).filter(t => now - t < windowMs);
-  if (attempts.length >= maxAttempts) {
-    return res.status(429).render('admin/login', { error: 'Too many attempts. Try again in 15 minutes.' });
-  }
-  attempts.push(now);
-  loginAttempts.set(ip, attempts);
-  next();
-}
-
-// Security: Input sanitization - strip dangerous keys
-const DANGEROUS_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
-function sanitizeInput(obj) {
-  if (!obj || typeof obj !== 'object') return obj;
-  const clean = Array.isArray(obj) ? [] : {};
-  for (const [key, val] of Object.entries(obj)) {
-    if (DANGEROUS_KEYS.has(key)) continue;
-    if (typeof val === 'object' && val !== null) {
-      clean[key] = sanitizeInput(val);
-    } else {
-      clean[key] = val;
-    }
-  }
-  return clean;
-}
-
-// Security: Validate numeric ID parameter
-function isValidId(id) {
-  return /^\d+$/.test(id);
-}
-
-// Security: Path traversal prevention
-function sanitizeFilename(filename) {
-  return path.basename(filename);
-}
-
-// Security: CSRF token (double-submit cookie pattern)
-function generateCsrfToken() {
-  return crypto.randomBytes(32).toString('hex');
-}
-
-function csrfProtection(req, res, next) {
-  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-    if (!req.session.csrfToken) {
-      req.session.csrfToken = generateCsrfToken();
-    }
-    res.locals.csrfToken = req.session.csrfToken;
-    return next();
-  }
-  const token = req.headers['x-csrf-token'] || (req.body && req.body._csrf);
-  if (!token || !req.session.csrfToken || token !== req.session.csrfToken) {
-    return res.status(403).json({ error: 'Invalid CSRF token' });
-  }
-  next();
 }
 
 // ========== PUBLIC ROUTES ==========
@@ -180,24 +109,17 @@ app.get('/', (req, res) => {
 // ========== ADMIN ROUTES ==========
 
 app.get('/admin/login', (req, res) => {
-  if (!req.session.csrfToken) req.session.csrfToken = generateCsrfToken();
-  res.render('admin/login', { error: null, csrfToken: req.session.csrfToken });
+  res.render('admin/login', { error: null });
 });
 
-app.post('/admin/login', rateLimitLogin, (req, res) => {
+app.post('/admin/login', (req, res) => {
   const { password } = req.body;
-  if (!password || typeof password !== 'string') {
-    if (!req.session.csrfToken) req.session.csrfToken = generateCsrfToken();
-    return res.render('admin/login', { error: 'Invalid password', csrfToken: req.session.csrfToken });
-  }
   const settings = getSettings();
   if (settings.admin_password_hash && bcrypt.compareSync(password, settings.admin_password_hash)) {
     req.session.isAdmin = true;
-    req.session.csrfToken = generateCsrfToken();
     return res.redirect('/admin');
   }
-  if (!req.session.csrfToken) req.session.csrfToken = generateCsrfToken();
-  res.render('admin/login', { error: 'Invalid password', csrfToken: req.session.csrfToken });
+  res.render('admin/login', { error: 'Invalid password' });
 });
 
 app.get('/admin/logout', (req, res) => {
@@ -217,7 +139,7 @@ app.get('/admin', requireAuth, (req, res) => {
     outgrowers: getAll('outgrowers').length,
     gallery: getAll('gallery').length,
   };
-  res.render('admin/dashboard', { settings, counts, csrfToken: req.session.csrfToken });
+  res.render('admin/dashboard', { settings, counts });
 });
 
 // ========== API: SETTINGS ==========
@@ -233,54 +155,43 @@ app.get('/api/settings/:category', requireAuth, (req, res) => {
 
 app.put('/api/settings', requireAuth, (req, res) => {
   const db = readDb();
-  const items = Array.isArray(req.body) ? req.body : [];
+  const items = req.body;
   items.forEach(item => {
-    const clean = sanitizeInput(item);
-    if (!clean.key || typeof clean.key !== 'string') return;
-    const idx = db.settings.findIndex(s => s.key === clean.key);
+    const idx = db.settings.findIndex(s => s.key === item.key);
     if (idx >= 0) {
-      db.settings[idx].value = clean.value;
-      if (clean.category) db.settings[idx].category = clean.category;
+      db.settings[idx].value = item.value;
+      if (item.category) db.settings[idx].category = item.category;
     } else {
-      db.settings.push(clean);
+      db.settings.push(item);
     }
   });
-  fs.writeFileSync(path.join(__dirname, 'data', 'db.json'), JSON.stringify(db, null, 2));
+  require('fs').writeFileSync(path.join(__dirname, 'data', 'db.json'), JSON.stringify(db, null, 2));
   res.json({ success: true });
 });
 
 // ========== API: NAVIGATION ==========
 app.get('/api/navigation', requireAuth, (req, res) => res.json(getAll('navigation')));
-app.post('/api/navigation', requireAuth, (req, res) => res.json(insert('navigation', sanitizeInput(req.body))));
-app.put('/api/navigation/:id', requireAuth, (req, res) => {
-  if (!isValidId(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
-  res.json(update('navigation', req.params.id, sanitizeInput(req.body)));
-});
-app.delete('/api/navigation/:id', requireAuth, (req, res) => {
-  if (!isValidId(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
-  res.json({ success: remove('navigation', req.params.id) });
-});
+app.post('/api/navigation', requireAuth, (req, res) => res.json(insert('navigation', req.body)));
+app.put('/api/navigation/:id', requireAuth, (req, res) => res.json(update('navigation', req.params.id, req.body)));
+app.delete('/api/navigation/:id', requireAuth, (req, res) => res.json({ success: remove('navigation', req.params.id) }));
 
 // ========== API: GENERIC CRUD ==========
 function createCrudRoutes(collectionName) {
   app.get(`/api/${collectionName}`, requireAuth, (req, res) => res.json(getAll(collectionName)));
   app.get(`/api/${collectionName}/:id`, requireAuth, (req, res) => {
-    if (!isValidId(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
     const item = findById(collectionName, req.params.id);
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   });
   app.post(`/api/${collectionName}`, requireAuth, (req, res) => {
-    try { res.json(insert(collectionName, sanitizeInput(req.body))); }
+    try { res.json(insert(collectionName, req.body)); }
     catch (e) { res.status(400).json({ error: e.message }); }
   });
   app.put(`/api/${collectionName}/:id`, requireAuth, (req, res) => {
-    if (!isValidId(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
-    try { res.json(update(collectionName, req.params.id, sanitizeInput(req.body))); }
+    try { res.json(update(collectionName, req.params.id, req.body)); }
     catch (e) { res.status(400).json({ error: e.message }); }
   });
   app.delete(`/api/${collectionName}/:id`, requireAuth, (req, res) => {
-    if (!isValidId(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
     res.json({ success: remove(collectionName, req.params.id) });
   });
 }
@@ -357,17 +268,9 @@ async function handleUpload(req, res) {
 }
 
 app.delete('/api/upload/:filename', requireAuth, (req, res) => {
-  const safeFilename = sanitizeFilename(req.params.filename);
-  if (!safeFilename || safeFilename !== req.params.filename) {
-    return res.status(400).json({ error: 'Invalid filename' });
-  }
-  const filePath = path.join(UPLOADS_DIR, safeFilename);
-  const resolved = path.resolve(filePath);
-  if (!resolved.startsWith(path.resolve(UPLOADS_DIR))) {
-    return res.status(400).json({ error: 'Invalid path' });
-  }
-  if (fs.existsSync(resolved)) {
-    fs.unlinkSync(resolved);
+  const filePath = path.join(UPLOADS_DIR, req.params.filename);
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
     return res.json({ success: true });
   }
   res.status(404).json({ error: 'File not found' });
@@ -379,7 +282,7 @@ function renderAdminSection(collectionName, title) {
     let data = getAll(collectionName);
     if (collectionName === 'navigation') data = data;
     if (collectionName === 'footer_links') data = getAll('footer_links');
-    res.render('admin/section', { sectionKey: collectionName, title, data, csrfToken: req.session.csrfToken });
+    res.render('admin/section', { sectionKey: collectionName, title, data });
   };
 }
 
@@ -390,7 +293,7 @@ app.get('/admin/settings', requireAuth, (req, res) => {
     if (!grouped[s.category]) grouped[s.category] = [];
     grouped[s.category].push(s);
   });
-  res.render('admin/settings', { grouped, csrfToken: req.session.csrfToken });
+  res.render('admin/settings', { grouped });
 });
 
 app.get('/admin/products', requireAuth, renderAdminSection('products', 'Products & Experiences'));
@@ -408,13 +311,10 @@ app.get('/admin/gallery', requireAuth, renderAdminSection('gallery', 'Gallery'))
 // Change password
 app.post('/admin/change-password', requireAuth, (req, res) => {
   const { newPassword } = req.body;
-  if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 8) {
-    return res.status(400).json({ error: 'Password must be at least 8 characters' });
-  }
   const db = readDb();
   const idx = db.settings.findIndex(s => s.key === 'admin_password_hash');
   if (idx >= 0) db.settings[idx].value = bcrypt.hashSync(newPassword, 10);
-  fs.writeFileSync(path.join(__dirname, 'data', 'db.json'), JSON.stringify(db, null, 2));
+  require('fs').writeFileSync(path.join(__dirname, 'data', 'db.json'), JSON.stringify(db, null, 2));
   res.json({ success: true });
 });
 
