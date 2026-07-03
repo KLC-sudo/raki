@@ -181,7 +181,7 @@ db.outgrowers = [
   { id: 1, name: 'Mukono District', region: 'Central Region', description: '200+ partners', icon: 'mountain', sort_order: 1 },
   { id: 2, name: 'Kapchorwa, Mt. Elgon', region: 'Eastern', description: 'High-altitude Arabica, 120+ farmers', icon: 'trees', sort_order: 2 },
   { id: 3, name: 'Bushenyi District', region: 'Western', description: 'Robusta specialists, 100+ farmers', icon: 'landmark', sort_order: 3 },
-  { id: 4, name: 'Jinja / Sezibwa Basin', region: 'Lake Victoria', description: '80+ farmers, river terraces', icon: 'river', sort_order: 4 },
+  { id: 4, name: 'Jinja / Sezibwa Basin', region: 'Lake Victoria', description: '80+ farmers, river terraces', icon: 'droplets', sort_order: 4 },
   { id: 5, name: 'Zirobwe, Luweero', region: 'Central North', description: '50+ new outgrowers', icon: 'sun', sort_order: 5 },
 ];
 

@@ -17,8 +17,8 @@
             --theme-cream: <%= settings.color_bg %>;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght<%= settings.heading_weight === '900' ? '/300;400;500;600;700;800;900' : '' %>&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body class="bg-cream text-bark-700 antialiased">
@@ -647,10 +647,10 @@
                     </div>
                     <p class="text-xs text-bark-500 leading-relaxed mb-4 max-w-xs font-mono"><%= settings.site_tagline %> — <%= settings.site_description %></p>
                     <div class="flex gap-2">
-                        <a href="<%= settings.social_instagram %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="instagram" class="w-3.5 h-3.5"></i></a>
-                        <a href="<%= settings.social_twitter %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="twitter" class="w-3.5 h-3.5"></i></a>
-                        <a href="<%= settings.social_facebook %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="facebook" class="w-3.5 h-3.5"></i></a>
-                        <a href="<%= settings.social_youtube %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="youtube" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_instagram %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="camera" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_twitter %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_facebook %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="users" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_youtube %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="play" class="w-3.5 h-3.5"></i></a>
                     </div>
                 </div>
 

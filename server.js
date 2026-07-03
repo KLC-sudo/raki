@@ -51,23 +51,18 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use((req, res, next) => {
-  if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
-    return next();
-  }
-  next();
-});
+
+const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+if (!process.env.SESSION_SECRET) {
+  console.warn('WARNING: No SESSION_SECRET env var. Using random secret (sessions won\'t persist across restarts).');
+}
+
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'raki-coffee-secret-2025',
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
 }));
-
-if (!process.env.SESSION_SECRET) {
-  console.error('FATAL: SESSION_SECRET environment variable is required.');
-  process.exit(1);
-}
 
 // Security: CSRF protection
 function generateCsrfToken() { return crypto.randomBytes(32).toString('hex'); }
