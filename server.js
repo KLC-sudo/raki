@@ -48,6 +48,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('trust proxy', 1);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -61,7 +62,7 @@ app.use(session({
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
+  cookie: { secure: 'auto', maxAge: 24 * 60 * 60 * 1000 }
 }));
 
 // Security: CSRF protection
@@ -73,9 +74,14 @@ function csrfProtection(req, res, next) {
     res.locals.csrfToken = req.session.csrfToken;
     return next();
   }
+  if (!req.session || !req.session.csrfToken) {
+    if (req.path.startsWith('/api/')) return res.status(403).json({ error: 'Session expired' });
+    return res.redirect(req.originalUrl);
+  }
   const token = req.headers['x-csrf-token'] || (req.body && req.body._csrf);
-  if (!token || !req.session.csrfToken || token !== req.session.csrfToken) {
-    return res.status(403).json({ error: 'Invalid CSRF token' });
+  if (!token || token !== req.session.csrfToken) {
+    if (req.path.startsWith('/api/')) return res.status(403).json({ error: 'Invalid CSRF token' });
+    return res.redirect('back');
   }
   next();
 }
