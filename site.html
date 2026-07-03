@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAKI Coffee — Meraki</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                    },
+                    colors: {
+                        bark: {
+                            50: '#F5F0E8',
+                            100: '#EBE3D5',
+                            200: '#D4C4A8',
+                            300: '#C4A87A',
+                            400: '#A8895C',
+                            500: '#8B6E3C',
+                            600: '#6B4E26',
+                            700: '#4A3518',
+                            800: '#2D1F0E',
+                            900: '#1A1008',
+                        },
+                        sand: '#F5F0E8',
+                        cream: '#FAF7F2',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+        ::selection { background: #4A3518; color: #F5F0E8; }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .marquee-track { animation: marquee 20s linear infinite; }
+
+        .hard-shadow { box-shadow: 5px 5px 0px #4A3518; }
+        .hard-shadow-sm { box-shadow: 4px 4px 0px #4A3518; }
+        .hard-shadow-lg { box-shadow: 7px 7px 0px #4A3518; }
+        .hard-shadow-white { box-shadow: 5px 5px 0px #F5F0E8; }
+        .hard-shadow-sand { box-shadow: 5px 5px 0px #D4C4A8; }
+
+        .card-hover { transition: transform 0.15s, box-shadow 0.15s; }
+        .card-hover:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 7px 7px 0px #4A3518;
+        }
+    </style>
+</head>
+<body class="bg-cream text-bark-700 antialiased">
+
+    <!-- ==================== NAVIGATION ==================== -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-cream border-b-2 border-bark-700">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#hero" class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-bark-700 rounded-md flex items-center justify-center">
+                    <i data-lucide="coffee" class="w-5 h-5 text-sand"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-black tracking-tight text-bark-700 uppercase">RAKI</span>
+                    <span class="block text-[9px] font-mono font-bold tracking-[0.25em] text-bark-400 uppercase -mt-0.5">coffee co.</span>
+                </div>
+            </a>
+
+            <div class="hidden md:flex items-center gap-1">
+                <a href="#products" class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-bark-600 hover:bg-bark-700 hover:text-sand rounded-md transition-colors">Products</a>
+                <a href="#meraki" class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-bark-600 hover:bg-bark-700 hover:text-sand rounded-md transition-colors">Meraki Trail</a>
+                <a href="#story" class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-bark-600 hover:bg-bark-700 hover:text-sand rounded-md transition-colors">Story</a>
+                <a href="#events" class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-bark-600 hover:bg-bark-700 hover:text-sand rounded-md transition-colors">Events</a>
+                <a href="#community" class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-bark-600 hover:bg-bark-700 hover:text-sand rounded-md transition-colors">Impact</a>
+                <a href="#location" class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-bark-600 hover:bg-bark-700 hover:text-sand rounded-md transition-colors">Location</a>
+                <a href="#subscribe" class="ml-3 bg-bark-700 text-sand text-xs font-bold uppercase tracking-wider px-5 py-2.5 hover:bg-bark-800 rounded-md transition-colors border-2 border-bark-700">Subscribe</a>
+            </div>
+
+            <button id="mobile-toggle" class="md:hidden w-10 h-10 bg-bark-700 rounded-md flex items-center justify-center">
+                <i data-lucide="menu" class="w-5 h-5 text-sand"></i>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-bark-700 border-t-2 border-bark-800">
+            <div class="px-6 py-4 flex flex-col gap-0">
+                <a href="#products" class="mobile-link py-3 text-sm font-bold uppercase tracking-wider text-sand border-b border-bark-600">Products</a>
+                <a href="#meraki" class="mobile-link py-3 text-sm font-bold uppercase tracking-wider text-sand border-b border-bark-600">Meraki Trail</a>
+                <a href="#story" class="mobile-link py-3 text-sm font-bold uppercase tracking-wider text-sand border-b border-bark-600">Story</a>
+                <a href="#events" class="mobile-link py-3 text-sm font-bold uppercase tracking-wider text-sand border-b border-bark-600">Events</a>
+                <a href="#community" class="mobile-link py-3 text-sm font-bold uppercase tracking-wider text-sand border-b border-bark-600">Impact</a>
+                <a href="#location" class="mobile-link py-3 text-sm font-bold uppercase tracking-wider text-sand border-b border-bark-600">Location</a>
+                <a href="#subscribe" class="mt-3 text-center bg-sand text-bark-700 text-sm font-bold uppercase tracking-wider px-6 py-3 rounded-md border-2 border-sand">Subscribe</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== HERO ==================== -->
+    <section id="hero" class="pt-20 bg-bark-700 text-sand min-h-screen flex flex-col justify-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-[0.06]" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23F5F0E8&quot; fill-opacity=&quot;1&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+
+        <div class="max-w-7xl mx-auto px-6 w-full relative z-10 py-16">
+            <div class="grid lg:grid-cols-12 gap-8 items-end">
+                <div class="lg:col-span-7">
+                    <div class="inline-flex items-center gap-2 border-2 border-bark-400 px-4 py-2 rounded-md mb-8">
+                        <span class="w-2 h-2 bg-bark-300 rounded-full animate-pulse"></span>
+                        <span class="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-bark-300">Mukono, Uganda</span>
+                    </div>
+
+                    <h1 class="text-6xl md:text-8xl lg:text-[10rem] font-black leading-[0.85] tracking-tighter uppercase mb-6">
+                        RAKI<br>
+                        <span class="text-bark-400">Coffee</span>
+                    </h1>
+
+                    <p class="text-lg md:text-xl text-bark-300 leading-relaxed max-w-md mb-10 font-light">
+                        Crafting experiences with soul, creativity & love — from Uganda's highlands to your cup.
+                    </p>
+
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#products" class="inline-flex items-center gap-2 bg-sand text-bark-700 font-bold text-sm uppercase tracking-wider px-8 py-4 rounded-md border-2 border-sand hover:bg-transparent hover:text-sand transition-colors">
+                            Explore
+                            <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#meraki" class="inline-flex items-center gap-2 bg-transparent text-sand font-bold text-sm uppercase tracking-wider px-8 py-4 rounded-md border-2 border-bark-400 hover:border-sand transition-colors">
+                            Meraki Trail
+                        </a>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 hidden lg:block">
+                    <div class="border-2 border-bark-400 rounded-lg p-6">
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="border-b-2 border-bark-400 pb-4">
+                                <div class="text-5xl font-black text-sand leading-none">500+</div>
+                                <div class="text-[10px] font-mono font-bold uppercase tracking-widest text-bark-400 mt-2">Outgrower Farmers</div>
+                            </div>
+                            <div class="border-b-2 border-bark-400 pb-4">
+                                <div class="text-5xl font-black text-sand leading-none">3</div>
+                                <div class="text-[10px] font-mono font-bold uppercase tracking-widest text-bark-400 mt-2">Trail Levels</div>
+                            </div>
+                            <div>
+                                <div class="text-5xl font-black text-sand leading-none">100%</div>
+                                <div class="text-[10px] font-mono font-bold uppercase tracking-widest text-bark-400 mt-2">Ugandan Grown</div>
+                            </div>
+                            <div>
+                                <div class="text-5xl font-black text-sand leading-none">5</div>
+                                <div class="text-[10px] font-mono font-bold uppercase tracking-widest text-bark-400 mt-2">Districts</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 border-2 border-bark-400 rounded-lg p-4 flex items-center gap-4">
+                        <div class="w-10 h-10 bg-bark-400 rounded-md flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="coffee" class="w-5 h-5 text-bark-700"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-black uppercase tracking-wider text-sand">Meraki Coffee</div>
+                            <div class="text-[10px] font-mono text-bark-400">Consultancy · Green Beans · Roasted Beans</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t-2 border-bark-400 mt-12 overflow-hidden">
+            <div class="marquee-track flex items-center whitespace-nowrap py-3">
+                <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8">Coffee Experience</span>
+                <span class="text-bark-500 mx-2">✦</span>
+                <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8">Eco Cycling</span>
+                <span class="text-bark-500 mx-2">✦</span>
+                <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8">Nature Walks</span>
+                <span class="text-bark-500 mx-2">✦</span>
+                <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8">Sezibwa & Coffee</span>
+                <span class="text-bark-500 mx-2">✦</span>
+                <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8">Meraki Trail</span>
+                <span class="text-bark-500 mx-2">✦</span>
+                <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8">Coffee Experience</span>
+                <span class="text-bark-500 mx-2">✦</span>
+                <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8">Eco Cycling</span>
+                <span class="text-bark-500 mx-2">✦</span>
+                <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8">Nature Walks</span>
+                <span class="text-bark-500 mx-2">✦</span>
+                <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8">Sezibwa & Coffee</span>
+                <span class="text-bark-500 mx-2">✦</span>
+                <span class="text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-bark-400 mx-8">Meraki Trail</span>
+                <span class="text-bark-500 mx-2">✦</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PRODUCTS ==================== -->
+    <section id="products" class="py-20 md:py-28 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block">001 — Products & Experiences</span>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]">More Than<br>Coffee.</h2>
+                </div>
+                <p class="text-sm text-bark-500 max-w-sm leading-relaxed">From bean to cup, trail to river — immersive experiences connecting you with the land, people, and craft.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-56 overflow-hidden border-b-2 border-bark-700">
+                        <img src="https://picsum.photos/seed/coffee-picking-uganda/600/350.jpg" alt="Coffee Experience" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 bg-bark-50 px-2 py-1 rounded border border-bark-200">Experience</span>
+                            <span class="text-[9px] font-mono text-bark-400">01</span>
+                        </div>
+                        <h3 class="text-xl font-black tracking-tight uppercase mb-2">Coffee Experience</h3>
+                        <p class="text-sm text-bark-500 leading-relaxed">Pick cherries, roast beans, brew your cup — the full journey from branch to palate.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-56 overflow-hidden border-b-2 border-bark-700">
+                        <img src="https://picsum.photos/seed/cycling-green-hills/600/350.jpg" alt="Eco Cycling" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 bg-bark-50 px-2 py-1 rounded border border-bark-200">Adventure</span>
+                            <span class="text-[9px] font-mono text-bark-400">02</span>
+                        </div>
+                        <h3 class="text-xl font-black tracking-tight uppercase mb-2">Eco Cycling</h3>
+                        <p class="text-sm text-bark-500 leading-relaxed">Pedal through coffee terraces and rolling hills. Feel the land, breathe the air.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-56 overflow-hidden border-b-2 border-bark-700">
+                        <img src="https://picsum.photos/seed/forest-walk-africa/600/350.jpg" alt="Nature Guided Walks" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 bg-bark-50 px-2 py-1 rounded border border-bark-200">Nature</span>
+                            <span class="text-[9px] font-mono text-bark-400">03</span>
+                        </div>
+                        <h3 class="text-xl font-black tracking-tight uppercase mb-2">Nature Guided Walks</h3>
+                        <p class="text-sm text-bark-500 leading-relaxed">Expert-led trails through native flora, fauna, and the ecosystems behind great coffee.</p>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-56 overflow-hidden border-b-2 border-bark-700">
+                        <img src="https://picsum.photos/seed/sezibwa-waterfall/600/350.jpg" alt="Sezibwa and Coffee" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 bg-bark-50 px-2 py-1 rounded border border-bark-200">Heritage</span>
+                            <span class="text-[9px] font-mono text-bark-400">04</span>
+                        </div>
+                        <h3 class="text-xl font-black tracking-tight uppercase mb-2">Sezibwa & Coffee</h3>
+                        <p class="text-sm text-bark-500 leading-relaxed">Spiritual falls paired with curated coffee tasting. Heritage meets the art of brewing.</p>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-56 overflow-hidden border-b-2 border-bark-700">
+                        <img src="https://picsum.photos/seed/coffee-beans-roasted/600/350.jpg" alt="Coffee Products" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 bg-bark-50 px-2 py-1 rounded border border-bark-200">Shop</span>
+                            <span class="text-[9px] font-mono text-bark-400">05</span>
+                        </div>
+                        <h3 class="text-xl font-black tracking-tight uppercase mb-2">Coffee Products</h3>
+                        <p class="text-sm text-bark-500 leading-relaxed">Single-origin beans, ground coffee, signature blends — take RAKI home with you.</p>
+                    </div>
+                </div>
+
+                <!-- Card 6 — Meraki Trail (featured) -->
+                <div class="card-hover bg-bark-700 border-2 border-bark-700 rounded-lg hard-shadow-white overflow-hidden">
+                    <div class="h-56 overflow-hidden border-b-2 border-bark-600">
+                        <img src="https://picsum.photos/seed/hiking-trail-mountain/600/350.jpg" alt="Meraki Trail" class="w-full h-full object-cover opacity-70">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-300 bg-bark-600 px-2 py-1 rounded border border-bark-500">Featured</span>
+                            <span class="text-[9px] font-mono text-bark-400">06</span>
+                        </div>
+                        <h3 class="text-xl font-black tracking-tight uppercase mb-2 text-sand">Meraki Trail</h3>
+                        <p class="text-sm text-bark-300 leading-relaxed">3-level hiking experience. Soul, creativity & love — the Meraki way.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MERAKI TRAIL ==================== -->
+    <section id="meraki" class="py-20 md:py-28 bg-bark-700 text-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-14">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block">002 — Signature Experience</span>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]">Meraki<br>Trail</h2>
+                <p class="text-sm text-bark-300 max-w-lg mt-4 leading-relaxed font-mono">/me·ra·ki/ — doing something with soul, creativity, and love. Choose your path. Leave a piece of yourself on the trail.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Beginner -->
+                <div class="card-hover bg-cream text-bark-700 border-2 border-bark-700 rounded-lg hard-shadow-sm">
+                    <div class="p-6 border-b-2 border-bark-700 flex items-center justify-between">
+                        <div>
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Level 01</span>
+                            <h3 class="text-2xl font-black tracking-tight uppercase mt-1">Beginner</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-bark-700 rounded-md flex items-center justify-center">
+                            <i data-lucide="sprout" class="w-6 h-6 text-sand"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 mb-5">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-wider text-bark-500 border border-bark-300 px-2 py-1 rounded">2–3 Hrs</span>
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-wider text-bark-500 border border-bark-300 px-2 py-1 rounded">Easy</span>
+                        </div>
+                        <p class="text-sm text-bark-500 leading-relaxed mb-5">Gentle walk through lower coffee terraces. Scenic views, coffee tasting, and a warm cup at the finish.</p>
+                        <ul class="space-y-2 mb-6">
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Scenic coffee farm views
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Guided coffee tasting
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Complementary RAKI cup
+                            </li>
+                        </ul>
+                        <a href="#subscribe" class="inline-block w-full text-center bg-bark-700 text-sand font-bold text-xs uppercase tracking-wider py-3 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Book This Trail</a>
+                    </div>
+                </div>
+
+                <!-- Intermediate -->
+                <div class="card-hover bg-sand text-bark-700 border-2 border-bark-700 rounded-lg hard-shadow relative md:-translate-y-4">
+                    <div class="absolute -top-0 right-6 bg-bark-700 text-sand text-[9px] font-mono font-bold uppercase tracking-widest px-3 py-1.5 rounded-b-md">Popular</div>
+                    <div class="p-6 border-b-2 border-bark-700 flex items-center justify-between">
+                        <div>
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Level 02</span>
+                            <h3 class="text-2xl font-black tracking-tight uppercase mt-1">Intermediate</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-bark-700 rounded-md flex items-center justify-center">
+                            <i data-lucide="trees" class="w-6 h-6 text-sand"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 mb-5">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-wider text-bark-500 border border-bark-300 px-2 py-1 rounded">4–5 Hrs</span>
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-wider text-bark-500 border border-bark-300 px-2 py-1 rounded">Moderate</span>
+                        </div>
+                        <p class="text-sm text-bark-500 leading-relaxed mb-5">Deeper journey through forest paths and mid-altitude ridges. Farm-to-cup workshop, local lunch, waterfall stop.</p>
+                        <ul class="space-y-2 mb-6">
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Forest & ridge hike
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Farm-to-cup workshop
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Local lunch included
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Waterfall visit
+                            </li>
+                        </ul>
+                        <a href="#subscribe" class="inline-block w-full text-center bg-bark-700 text-sand font-bold text-xs uppercase tracking-wider py-3 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Book This Trail</a>
+                    </div>
+                </div>
+
+                <!-- Advanced -->
+                <div class="card-hover bg-cream text-bark-700 border-2 border-bark-700 rounded-lg hard-shadow-sm">
+                    <div class="p-6 border-b-2 border-bark-700 flex items-center justify-between">
+                        <div>
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Level 03</span>
+                            <h3 class="text-2xl font-black tracking-tight uppercase mt-1">Advanced</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-bark-700 rounded-md flex items-center justify-center">
+                            <i data-lucide="mountain-snow" class="w-6 h-6 text-sand"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 mb-5">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-wider text-bark-500 border border-bark-300 px-2 py-1 rounded">Full Day</span>
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-wider text-red-700 border-2 border-red-700 px-2 py-1 rounded font-black">Challenging</span>
+                        </div>
+                        <p class="text-sm text-bark-500 leading-relaxed mb-5">The ultimate Meraki. High-altitude trails, outgrower farm visits, sunset roasting ceremony over the valley.</p>
+                        <ul class="space-y-2 mb-6">
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> High-altitude trail
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Outgrower farm visits
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Sunset roasting ceremony
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-bark-600">
+                                <span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> All meals & gear included
+                            </li>
+                        </ul>
+                        <a href="#subscribe" class="inline-block w-full text-center bg-bark-700 text-sand font-bold text-xs uppercase tracking-wider py-3 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Book This Trail</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== OUR STORY ==================== -->
+    <section id="story" class="py-20 md:py-28 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                <div class="relative">
+                    <div class="border-2 border-bark-700 rounded-lg hard-shadow overflow-hidden">
+                        <img src="https://picsum.photos/seed/uganda-farmer-portrait/700/550.jpg" alt="RAKI Story" class="w-full h-[500px] object-cover">
+                    </div>
+                    <div class="absolute -bottom-6 -right-3 md:right-6 bg-bark-700 text-sand p-5 border-2 border-bark-700 rounded-lg hard-shadow-sand max-w-[240px]">
+                        <div class="flex items-center gap-3 mb-3 border-b border-bark-500 pb-3">
+                            <div class="w-8 h-8 bg-bark-400 rounded-md flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="coffee" class="w-4 h-4 text-bark-700"></i>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-sand">Meraki Coffee</div>
+                                <div class="text-[8px] font-mono text-bark-400">Est. 2018</div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] font-mono text-bark-300 leading-relaxed">Consultancy · Green Beans · Roasted Beans</div>
+                    </div>
+                </div>
+
+                <div class="lg:pt-8">
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block">003 — Our Story</span>
+                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-6">Rooted in<br>the Soil.</h2>
+                    <div class="border-l-4 border-bark-700 pl-5 mb-6">
+                        <p class="text-bark-500 leading-relaxed">RAKI Coffee was born from a simple belief: great coffee comes from great relationships — with the land, the farmers, and the community.</p>
+                    </div>
+                    <p class="text-sm text-bark-500 leading-relaxed mb-4">Nestled near the Sezibwa River in Uganda, we started as a small collective of passionate coffee lovers and local farmers. Today, we've grown into a destination where visitors experience coffee in its purest form.</p>
+                    <p class="text-sm text-bark-500 leading-relaxed mb-8">Our name carries the spirit of Meraki — doing things with soul, creativity, and love. Every trail we carve, every bean we roast, every community program we run is infused with this philosophy.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="#community" class="bg-bark-700 text-sand font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Our Impact →</a>
+                        <a href="#events" class="bg-transparent text-bark-700 font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-md border-2 border-bark-700 hover:bg-bark-700 hover:text-sand transition-colors">Events</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== EVENTS ==================== -->
+    <section id="events" class="py-20 md:py-28 bg-bark-700 text-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block">004 — Events</span>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]">Gather.<br>Celebrate.</h2>
+                </div>
+                <p class="text-sm text-bark-300 max-w-sm leading-relaxed">From harvest festivals to cupping workshops — events around the shared love of coffee and community.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="group border-2 border-bark-500 rounded-lg hover:border-sand p-5 flex items-start gap-4 cursor-pointer transition-colors">
+                    <div class="flex-shrink-0 w-14 h-14 border-2 border-bark-500 rounded-md group-hover:border-sand flex flex-col items-center justify-center transition-colors">
+                        <span class="text-[8px] font-mono font-bold uppercase text-bark-400 group-hover:text-sand transition-colors">MAR</span>
+                        <span class="text-lg font-black leading-none text-sand">15</span>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold uppercase tracking-tight text-sand mb-1">Harvest Season Opening</h4>
+                        <p class="text-sm text-bark-400">First pick of the season. Live music, cherry picking, fresh brews.</p>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="w-5 h-5 text-bark-500 group-hover:text-sand transition-colors flex-shrink-0 mt-1"></i>
+                </div>
+
+                <div class="group border-2 border-bark-500 rounded-lg hover:border-sand p-5 flex items-start gap-4 cursor-pointer transition-colors">
+                    <div class="flex-shrink-0 w-14 h-14 border-2 border-bark-500 rounded-md group-hover:border-sand flex flex-col items-center justify-center transition-colors">
+                        <span class="text-[8px] font-mono font-bold uppercase text-bark-400 group-hover:text-sand transition-colors">APR</span>
+                        <span class="text-lg font-black leading-none text-sand">22</span>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold uppercase tracking-tight text-sand mb-1">Earth Day Eco Ride</h4>
+                        <p class="text-sm text-bark-400">Special eco cycling event. Tree planting and coffee tasting included.</p>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="w-5 h-5 text-bark-500 group-hover:text-sand transition-colors flex-shrink-0 mt-1"></i>
+                </div>
+
+                <div class="group border-2 border-bark-500 rounded-lg hover:border-sand p-5 flex items-start gap-4 cursor-pointer transition-colors">
+                    <div class="flex-shrink-0 w-14 h-14 border-2 border-bark-500 rounded-md group-hover:border-sand flex flex-col items-center justify-center transition-colors">
+                        <span class="text-[8px] font-mono font-bold uppercase text-bark-400 group-hover:text-sand transition-colors">JUN</span>
+                        <span class="text-lg font-black leading-none text-sand">08</span>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold uppercase tracking-tight text-sand mb-1">Cupping Masterclass</h4>
+                        <p class="text-sm text-bark-400">Professional cupping techniques and brewing methods from our roasters.</p>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="w-5 h-5 text-bark-500 group-hover:text-sand transition-colors flex-shrink-0 mt-1"></i>
+                </div>
+
+                <div class="group border-2 border-bark-500 rounded-lg hover:border-sand p-5 flex items-start gap-4 cursor-pointer transition-colors">
+                    <div class="flex-shrink-0 w-14 h-14 border-2 border-bark-500 rounded-md group-hover:border-sand flex flex-col items-center justify-center transition-colors">
+                        <span class="text-[8px] font-mono font-bold uppercase text-bark-400 group-hover:text-sand transition-colors">AUG</span>
+                        <span class="text-lg font-black leading-none text-sand">17</span>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold uppercase tracking-tight text-sand mb-1">Meraki Trail Challenge</h4>
+                        <p class="text-sm text-bark-400">Annual advanced trail event. Push your limits. Earn the Meraki badge.</p>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="w-5 h-5 text-bark-500 group-hover:text-sand transition-colors flex-shrink-0 mt-1"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== WAYS TO PARTNER ==================== -->
+    <section id="partner" class="py-20 md:py-28 bg-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block">005 — Collaborate</span>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]">Ways to<br>Partner</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm p-6 text-center">
+                    <div class="w-14 h-14 bg-bark-700 rounded-md flex items-center justify-center mx-auto mb-5">
+                        <i data-lucide="store" class="w-7 h-7 text-sand"></i>
+                    </div>
+                    <h3 class="text-sm font-black uppercase tracking-tight mb-2">Retail</h3>
+                    <p class="text-xs text-bark-500 leading-relaxed">Stock RAKI in your store or café. Competitive margins + marketing support.</p>
+                </div>
+
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm p-6 text-center">
+                    <div class="w-14 h-14 bg-bark-700 rounded-md flex items-center justify-center mx-auto mb-5">
+                        <i data-lucide="globe" class="w-7 h-7 text-sand"></i>
+                    </div>
+                    <h3 class="text-sm font-black uppercase tracking-tight mb-2">Distribution</h3>
+                    <p class="text-xs text-bark-500 leading-relaxed">Regional and international distribution. Bring Ugandan coffee to the world.</p>
+                </div>
+
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm p-6 text-center">
+                    <div class="w-14 h-14 bg-bark-700 rounded-md flex items-center justify-center mx-auto mb-5">
+                        <i data-lucide="handshake" class="w-7 h-7 text-sand"></i>
+                    </div>
+                    <h3 class="text-sm font-black uppercase tracking-tight mb-2">CSR & NGO</h3>
+                    <p class="text-xs text-bark-500 leading-relaxed">Partner on community development, women & youth empowerment through coffee.</p>
+                </div>
+
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm p-6 text-center">
+                    <div class="w-14 h-14 bg-bark-700 rounded-md flex items-center justify-center mx-auto mb-5">
+                        <i data-lucide="calendar-heart" class="w-7 h-7 text-sand"></i>
+                    </div>
+                    <h3 class="text-sm font-black uppercase tracking-tight mb-2">Events & Tourism</h3>
+                    <p class="text-xs text-bark-500 leading-relaxed">Co-host events, curate coffee tourism, bring groups for Meraki Trail.</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-10">
+                <a href="#subscribe" class="bg-bark-700 text-sand font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors inline-block">Become a Partner →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== COMMUNITY IMPACT ==================== -->
+    <section id="community" class="py-20 md:py-28 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-14">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block">006 — Community Impact</span>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]">Brewing<br>Change.</h2>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-6 mb-14">
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-64 overflow-hidden border-b-2 border-bark-700">
+                        <img src="https://picsum.photos/seed/women-farming-africa/500/350.jpg" alt="Women Coffee Program" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-8 h-8 bg-bark-700 rounded-md flex items-center justify-center">
+                                <i data-lucide="heart-handshake" class="w-4 h-4 text-sand"></i>
+                            </div>
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Program 01</span>
+                        </div>
+                        <h3 class="text-xl font-black tracking-tight uppercase mb-2">Women Coffee Program</h3>
+                        <p class="text-sm text-bark-500 leading-relaxed mb-4">Training, resources, and fair-trade access. 200+ women building independent livelihoods through coffee.</p>
+                        <a href="#" class="text-xs font-bold uppercase tracking-wider text-bark-700 border-b-2 border-bark-700 hover:border-bark-400 hover:text-bark-400 transition-colors pb-0.5 inline-block">Learn More →</a>
+                    </div>
+                </div>
+
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-64 overflow-hidden border-b-2 border-bark-700">
+                        <img src="https://picsum.photos/seed/youth-learning-uganda/500/350.jpg" alt="Youths Development" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-8 h-8 bg-bark-700 rounded-md flex items-center justify-center">
+                                <i data-lucide="graduation-cap" class="w-4 h-4 text-sand"></i>
+                            </div>
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Program 02</span>
+                        </div>
+                        <h3 class="text-xl font-black tracking-tight uppercase mb-2">Youths Development</h3>
+                        <p class="text-sm text-bark-500 leading-relaxed mb-4">Skills in coffee farming, entrepreneurship, eco-tourism. Building the next generation of coffee leaders.</p>
+                        <a href="#" class="text-xs font-bold uppercase tracking-wider text-bark-700 border-b-2 border-bark-700 hover:border-bark-400 hover:text-bark-400 transition-colors pb-0.5 inline-block">Learn More →</a>
+                    </div>
+                </div>
+
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-64 overflow-hidden border-b-2 border-bark-700">
+                        <img src="https://picsum.photos/seed/farmer-training-coffee/500/350.jpg" alt="Farmer Development" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-8 h-8 bg-bark-700 rounded-md flex items-center justify-center">
+                                <i data-lucide="sprout" class="w-4 h-4 text-sand"></i>
+                            </div>
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Program 03</span>
+                        </div>
+                        <h3 class="text-xl font-black tracking-tight uppercase mb-2">Farmer Development</h3>
+                        <p class="text-sm text-bark-500 leading-relaxed mb-4">Sustainable agriculture, quality processing, business management. Grow better, earn more.</p>
+                        <a href="#" class="text-xs font-bold uppercase tracking-wider text-bark-700 border-b-2 border-bark-700 hover:border-bark-400 hover:text-bark-400 transition-colors pb-0.5 inline-block">Learn More →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-bark-700 text-sand p-5 text-center border-2 border-bark-700 rounded-lg">
+                    <div class="text-3xl font-black leading-none mb-1">500+</div>
+                    <div class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-300">Outgrower Farmers</div>
+                </div>
+                <div class="bg-bark-700 text-sand p-5 text-center border-2 border-bark-700 rounded-lg">
+                    <div class="text-3xl font-black leading-none mb-1">200+</div>
+                    <div class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-300">Women Empowered</div>
+                </div>
+                <div class="bg-bark-700 text-sand p-5 text-center border-2 border-bark-700 rounded-lg">
+                    <div class="text-3xl font-black leading-none mb-1">150+</div>
+                    <div class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-300">Youths Trained</div>
+                </div>
+                <div class="bg-bark-700 text-sand p-5 text-center border-2 border-bark-700 rounded-lg">
+                    <div class="text-3xl font-black leading-none mb-1">5</div>
+                    <div class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-300">Communities</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SUBSCRIPTION ==================== -->
+    <section id="subscribe" class="py-20 md:py-28 bg-bark-700 text-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block">007 — Subscribe</span>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] mb-6">Fresh RAKI,<br>Monthly.</h2>
+                    <p class="text-sm text-bark-300 max-w-md leading-relaxed mb-10">Choose your frequency, grind, and blend. We handle the rest. Never run out of Uganda's finest.</p>
+
+                    <div class="space-y-3">
+                        <div class="sub-plan border-2 border-bark-500 rounded-lg p-5 cursor-pointer hover:border-sand transition-colors" onclick="selectSub(this, 'starter')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 border-2 border-bark-500 rounded-md flex items-center justify-center">
+                                        <i data-lucide="cup-soda" class="w-5 h-5 text-bark-300"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold uppercase text-sm">Starter</span>
+                                        <span class="block text-[9px] font-mono text-bark-400">250g — single origin</span>
+                                    </div>
+                                </div>
+                                <span class="text-xl font-black">$25<span class="text-xs font-mono font-normal text-bark-400">/mo</span></span>
+                            </div>
+                        </div>
+
+                        <div class="sub-plan border-2 border-sand rounded-lg p-5 cursor-pointer bg-bark-600" onclick="selectSub(this, 'family')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-sand rounded-md flex items-center justify-center">
+                                        <i data-lucide="coffee" class="w-5 h-5 text-bark-700"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold uppercase text-sm">Family</span>
+                                        <span class="block text-[9px] font-mono text-bark-300">500g — your choice of blend</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[8px] font-mono font-bold uppercase tracking-wider bg-sand text-bark-700 px-2 py-0.5 rounded mb-1 block">Best Value</span>
+                                    <span class="text-xl font-black">$45<span class="text-xs font-mono font-normal text-bark-300">/mo</span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sub-plan border-2 border-bark-500 rounded-lg p-5 cursor-pointer hover:border-sand transition-colors" onclick="selectSub(this, 'connoisseur')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 border-2 border-bark-500 rounded-md flex items-center justify-center">
+                                        <i data-lucide="crown" class="w-5 h-5 text-bark-300"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold uppercase text-sm">Connoisseur</span>
+                                        <span class="block text-[9px] font-mono text-bark-400">1kg — exclusive micro-lot</span>
+                                    </div>
+                                </div>
+                                <span class="text-xl font-black">$75<span class="text-xs font-mono font-normal text-bark-400">/mo</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-cream text-bark-700 border-2 border-bark-700 rounded-lg p-8 hard-shadow-lg">
+                    <h3 class="text-2xl font-black uppercase tracking-tight mb-1">Start Subscription</h3>
+                    <p class="text-xs text-bark-400 mb-6 font-mono">Fill in your details. First box ships within 5 days.</p>
+
+                    <form id="subscription-form" onsubmit="handleSub(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1.5">Full Name</label>
+                            <input type="text" required placeholder="Your name" class="w-full px-4 py-3 border-2 border-bark-700 rounded-md focus:border-bark-500 outline-none text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1.5">Email</label>
+                            <input type="email" required placeholder="you@example.com" class="w-full px-4 py-3 border-2 border-bark-700 rounded-md focus:border-bark-500 outline-none text-sm bg-white">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1.5">Plan</label>
+                                <select id="plan-select" class="w-full px-4 py-3 border-2 border-bark-700 rounded-md focus:border-bark-500 outline-none text-sm bg-white">
+                                    <option value="starter">Starter</option>
+                                    <option value="family" selected>Family</option>
+                                    <option value="connoisseur">Connoisseur</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1.5">Grind</label>
+                                <select class="w-full px-4 py-3 border-2 border-bark-700 rounded-md focus:border-bark-500 outline-none text-sm bg-white">
+                                    <option>Whole Bean</option>
+                                    <option>Fine</option>
+                                    <option>Medium</option>
+                                    <option>Coarse</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1.5">Delivery Address</label>
+                            <textarea required placeholder="Your address" rows="2" class="w-full px-4 py-3 border-2 border-bark-700 rounded-md focus:border-bark-500 outline-none text-sm bg-white resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-bark-700 text-sand font-bold text-sm uppercase tracking-wider py-4 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors flex items-center justify-center gap-2">
+                            Subscribe Now
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                    <div id="sub-success" class="hidden text-center py-10">
+                        <div class="w-16 h-16 bg-bark-700 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="check" class="w-8 h-8 text-sand"></i>
+                        </div>
+                        <h4 class="text-xl font-black uppercase tracking-tight mb-1">Welcome to RAKI!</h4>
+                        <p class="text-xs text-bark-400 font-mono">Your first box is on its way. Check your email.</p>
+                    </div>
+                    <p class="text-[9px] font-mono text-bark-400 mt-4 text-center uppercase tracking-wider">Cancel anytime · Free shipping · 100% guaranteed</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== BUY / SHOP ==================== -->
+    <section id="buy" class="py-20 md:py-28 bg-sand">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block">008 — Shop</span>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]">Take Uganda<br>Home.</h2>
+                </div>
+                <p class="text-sm text-bark-500 max-w-sm leading-relaxed">Single-origin, sustainably grown, expertly roasted. Every purchase supports our farmers.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-64 bg-bark-50 border-b-2 border-bark-700 overflow-hidden">
+                        <img src="https://picsum.photos/seed/coffee-bag-brown/400/300.jpg" alt="Signature Blend" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5 border-b-2 border-bark-200">
+                        <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Single Origin</span>
+                        <h3 class="text-lg font-black uppercase tracking-tight mt-0.5">RAKI Signature</h3>
+                        <p class="text-xs text-bark-500 mt-1">Medium roast · Dark chocolate, citrus, honey · 250g</p>
+                    </div>
+                    <div class="p-5 flex items-center justify-between">
+                        <span class="text-2xl font-black">$18</span>
+                        <button onclick="addCart('RAKI Signature')" class="bg-bark-700 text-sand font-bold text-[10px] uppercase tracking-wider px-5 py-2.5 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-64 bg-bark-50 border-b-2 border-bark-700 overflow-hidden">
+                        <img src="https://picsum.photos/seed/coffee-dark-roast/400/300.jpg" alt="Sezibwa Roast" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5 border-b-2 border-bark-200">
+                        <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Organic</span>
+                        <h3 class="text-lg font-black uppercase tracking-tight mt-0.5">Sezibwa River Roast</h3>
+                        <p class="text-xs text-bark-500 mt-1">Dark roast · Bold body, stone fruit · 500g</p>
+                    </div>
+                    <div class="p-5 flex items-center justify-between">
+                        <span class="text-2xl font-black">$28</span>
+                        <button onclick="addCart('Sezibwa River Roast')" class="bg-bark-700 text-sand font-bold text-[10px] uppercase tracking-wider px-5 py-2.5 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="h-64 bg-bark-50 border-b-2 border-bark-700 overflow-hidden">
+                        <img src="https://picsum.photos/seed/coffee-special-lot/400/300.jpg" alt="Meraki Micro-Lot" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5 border-b-2 border-bark-200">
+                        <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Limited Edition</span>
+                        <h3 class="text-lg font-black uppercase tracking-tight mt-0.5">Meraki Micro-Lot</h3>
+                        <p class="text-xs text-bark-500 mt-1">Light roast · Floral, berry, wine · 250g</p>
+                    </div>
+                    <div class="p-5 flex items-center justify-between">
+                        <span class="text-2xl font-black">$35</span>
+                        <button onclick="addCart('Meraki Micro-Lot')" class="bg-bark-700 text-sand font-bold text-[10px] uppercase tracking-wider px-5 py-2.5 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== LOCATION & OUTGROWERS ==================== -->
+    <section id="location" class="py-20 md:py-28 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block">009 — Location</span>
+                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-6">Find Us.</h2>
+                    <p class="text-sm text-bark-500 leading-relaxed mb-8">Near the iconic Sezibwa Falls, Mukono District — the heart of Uganda's coffee country.</p>
+
+                    <div class="border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden mb-8 h-72 relative bg-bark-100">
+                        <img src="https://picsum.photos/seed/uganda-landscape-green/700/350.jpg" alt="Location" class="w-full h-full object-cover opacity-60">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-14 h-14 bg-bark-700 rounded-md flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="map-pin" class="w-7 h-7 text-sand"></i>
+                                </div>
+                                <p class="text-sm font-black uppercase text-bark-700">RAKI Coffee</p>
+                                <p class="text-[9px] font-mono text-bark-500">Near Sezibwa Falls, Mukono</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="border-2 border-bark-700 rounded-md p-4">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-bark-500 mb-2"></i>
+                            <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1">Address</p>
+                            <p class="text-xs text-bark-600">Sezibwa Road, Mukono, Uganda</p>
+                        </div>
+                        <div class="border-2 border-bark-700 rounded-md p-4">
+                            <i data-lucide="phone" class="w-4 h-4 text-bark-500 mb-2"></i>
+                            <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1">Phone</p>
+                            <p class="text-xs text-bark-600">+256 702 217 176</p>
+                        </div>
+                        <div class="border-2 border-bark-700 rounded-md p-4">
+                            <i data-lucide="mail" class="w-4 h-4 text-bark-500 mb-2"></i>
+                            <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1">Email</p>
+                            <p class="text-xs text-bark-600">ubirucent@gmail.com</p>
+                        </div>
+                        <div class="border-2 border-bark-700 rounded-md p-4">
+                            <i data-lucide="clock" class="w-4 h-4 text-bark-500 mb-2"></i>
+                            <p class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-1">Hours</p>
+                            <p class="text-xs text-bark-600">Mon–Sat: 7am–6pm</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block">010 — Outgrowers</span>
+                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-6">Our Network.</h2>
+                    <p class="text-sm text-bark-500 leading-relaxed mb-8">500+ outgrower farmers across Uganda's prime coffee regions.</p>
+
+                    <div class="space-y-3">
+                        <div class="group border-2 border-bark-700 rounded-md p-4 flex items-center gap-4 cursor-pointer hover:bg-bark-700 hover:text-sand transition-colors">
+                            <div class="w-10 h-10 bg-bark-700 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-sand transition-colors">
+                                <i data-lucide="mountain" class="w-5 h-5 text-sand group-hover:text-bark-700 transition-colors"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm uppercase tracking-tight">Mukono District</h4>
+                                <p class="text-[9px] font-mono text-bark-400 group-hover:text-bark-300 transition-colors">Central Region — 200+ partners</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-bark-400 group-hover:text-sand transition-colors"></i>
+                        </div>
+
+                        <div class="group border-2 border-bark-700 rounded-md p-4 flex items-center gap-4 cursor-pointer hover:bg-bark-700 hover:text-sand transition-colors">
+                            <div class="w-10 h-10 bg-bark-700 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-sand transition-colors">
+                                <i data-lucide="trees" class="w-5 h-5 text-sand group-hover:text-bark-700 transition-colors"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm uppercase tracking-tight">Kapchorwa, Mt. Elgon</h4>
+                                <p class="text-[9px] font-mono text-bark-400 group-hover:text-bark-300 transition-colors">Eastern — High-altitude Arabica, 120+ farmers</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-bark-400 group-hover:text-sand transition-colors"></i>
+                        </div>
+
+                        <div class="group border-2 border-bark-700 rounded-md p-4 flex items-center gap-4 cursor-pointer hover:bg-bark-700 hover:text-sand transition-colors">
+                            <div class="w-10 h-10 bg-bark-700 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-sand transition-colors">
+                                <i data-lucide="landmark" class="w-5 h-5 text-sand group-hover:text-bark-700 transition-colors"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm uppercase tracking-tight">Bushenyi District</h4>
+                                <p class="text-[9px] font-mono text-bark-400 group-hover:text-bark-300 transition-colors">Western — Robusta specialists, 100+ farmers</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-bark-400 group-hover:text-sand transition-colors"></i>
+                        </div>
+
+                        <div class="group border-2 border-bark-700 rounded-md p-4 flex items-center gap-4 cursor-pointer hover:bg-bark-700 hover:text-sand transition-colors">
+                            <div class="w-10 h-10 bg-bark-700 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-sand transition-colors">
+                                <i data-lucide="river" class="w-5 h-5 text-sand group-hover:text-bark-700 transition-colors"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm uppercase tracking-tight">Jinja / Sezibwa Basin</h4>
+                                <p class="text-[9px] font-mono text-bark-400 group-hover:text-bark-300 transition-colors">Lake Victoria — 80+ farmers, river terraces</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-bark-400 group-hover:text-sand transition-colors"></i>
+                        </div>
+
+                        <div class="group border-2 border-bark-700 rounded-md p-4 flex items-center gap-4 cursor-pointer hover:bg-bark-700 hover:text-sand transition-colors">
+                            <div class="w-10 h-10 bg-bark-700 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-sand transition-colors">
+                                <i data-lucide="sun" class="w-5 h-5 text-sand group-hover:text-bark-700 transition-colors"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm uppercase tracking-tight">Zirobwe, Luweero</h4>
+                                <p class="text-[9px] font-mono text-bark-400 group-hover:text-bark-300 transition-colors">Central North — 50+ new outgrowers</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-bark-400 group-hover:text-sand transition-colors"></i>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 border-2 border-bark-700 rounded-md p-5 bg-bark-700 text-sand">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="info" class="w-5 h-5 text-bark-300 mt-0.5 flex-shrink-0"></i>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider mb-1">Become an outgrower?</p>
+                                <p class="text-[10px] font-mono text-bark-300">Seedlings, training, guaranteed fair-trade purchases. <a href="#partner" class="underline text-sand hover:text-bark-200">Partner with us →</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CTA STRIP ==================== -->
+    <section class="py-12 bg-bark-700 border-y-2 border-bark-400">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-sand leading-none">Ready for Meraki?</h2>
+                <p class="text-sm text-bark-300 mt-1 font-mono">Visit. Hike. Brew. Subscribe.</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="#subscribe" class="bg-sand text-bark-700 font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-md border-2 border-sand hover:bg-transparent hover:text-sand transition-colors">Subscribe</a>
+                <a href="#buy" class="bg-transparent text-sand font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-md border-2 border-sand hover:bg-sand hover:text-bark-700 transition-colors">Shop</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-bark-900 text-bark-300 pt-14 pb-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+                <div class="col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-sand rounded-md flex items-center justify-center">
+                            <i data-lucide="coffee" class="w-5 h-5 text-bark-700"></i>
+                        </div>
+                        <div>
+                            <span class="text-xl font-black tracking-tight text-sand uppercase">RAKI</span>
+                            <span class="block text-[8px] font-mono font-bold tracking-[0.3em] text-bark-400 uppercase -mt-0.5">coffee co.</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-bark-500 leading-relaxed mb-4 max-w-xs font-mono">Crafting coffee experiences with soul, creativity & love — from Uganda's highlands to your cup.</p>
+                    <div class="flex gap-2">
+                        <a href="#" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors">
+                            <i data-lucide="instagram" class="w-3.5 h-3.5"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors">
+                            <i data-lucide="twitter" class="w-3.5 h-3.5"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors">
+                            <i data-lucide="facebook" class="w-3.5 h-3.5"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors">
+                            <i data-lucide="youtube" class="w-3.5 h-3.5"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-3">Experiences</h4>
+                    <ul class="space-y-1.5">
+                        <li><a href="#products" class="text-xs text-bark-500 hover:text-sand transition-colors">Coffee Experience</a></li>
+                        <li><a href="#products" class="text-xs text-bark-500 hover:text-sand transition-colors">Eco Cycling</a></li>
+                        <li><a href="#products" class="text-xs text-bark-500 hover:text-sand transition-colors">Nature Walks</a></li>
+                        <li><a href="#products" class="text-xs text-bark-500 hover:text-sand transition-colors">Sezibwa & Coffee</a></li>
+                        <li><a href="#meraki" class="text-xs text-bark-500 hover:text-sand transition-colors">Meraki Trail</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-3">Company</h4>
+                    <ul class="space-y-1.5">
+                        <li><a href="#story" class="text-xs text-bark-500 hover:text-sand transition-colors">Story</a></li>
+                        <li><a href="#events" class="text-xs text-bark-500 hover:text-sand transition-colors">Events</a></li>
+                        <li><a href="#community" class="text-xs text-bark-500 hover:text-sand transition-colors">Impact</a></li>
+                        <li><a href="#partner" class="text-xs text-bark-500 hover:text-sand transition-colors">Partner</a></li>
+                        <li><a href="#location" class="text-xs text-bark-500 hover:text-sand transition-colors">Location</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 mb-3">Shop</h4>
+                    <ul class="space-y-1.5">
+                        <li><a href="#buy" class="text-xs text-bark-500 hover:text-sand transition-colors">Coffee Products</a></li>
+                        <li><a href="#subscribe" class="text-xs text-bark-500 hover:text-sand transition-colors">Subscription</a></li>
+                        <li><a href="#" class="text-xs text-bark-500 hover:text-sand transition-colors">Wholesale</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t-2 border-bark-700 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-[9px] font-mono text-bark-600 uppercase tracking-wider">© 2025 RAKI Coffee Co. · Mukono, Namataba · Uganda</p>
+                <div class="flex items-center gap-4">
+                    <p class="text-[9px] font-mono text-bark-600">Mubiru Vincent, CEO</p>
+                    <span class="text-bark-700">|</span>
+                    <p class="text-[9px] font-mono text-bark-600">+256 702 217 176</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== TOAST ==================== -->
+    <div id="toast" class="fixed bottom-6 left-6 z-50 transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none">
+        <div class="bg-bark-700 text-sand px-6 py-4 border-2 border-bark-600 rounded-md flex items-center gap-3 max-w-sm">
+            <i data-lucide="check" class="w-4 h-4 text-sand flex-shrink-0"></i>
+            <span id="toast-msg" class="text-xs font-bold uppercase tracking-wider"></span>
+        </div>
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileToggle.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            t.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            t.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                t.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+                t.classList.remove('translate-y-0', 'opacity-100');
+            }, 2500);
+        }
+
+        function addCart(name) { showToast(`${name} added ✓`); }
+
+        function selectSub(el, plan) {
+            document.getElementById('plan-select').value = plan;
+            document.querySelectorAll('.sub-plan').forEach(p => {
+                p.classList.remove('border-sand', 'bg-bark-600');
+                p.classList.add('border-bark-500');
+            });
+            el.classList.remove('border-bark-500');
+            el.classList.add('border-sand', 'bg-bark-600');
+            showToast(`${plan.charAt(0).toUpperCase() + plan.slice(1)} selected`);
+        }
+
+        function handleSub(e) {
+            e.preventDefault();
+            document.getElementById('subscription-form').classList.add('hidden');
+            document.getElementById('sub-success').classList.remove('hidden');
+            lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+            showToast('Welcome to RAKI ☕');
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                const t = document.querySelector(this.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('section').forEach(s => {
+            s.style.opacity = '0';
+            s.style.transform = 'translateY(24px)';
+            s.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            obs.observe(s);
+        });
+        document.getElementById('hero').style.opacity = '1';
+        document.getElementById('hero').style.transform = 'translateY(0)';
+    </script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> — RAKI CMS</title>
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="bg-[#1A1008] min-h-screen text-[#F5F0E8]">
+    <%- include('partials/nav', { page: sectionKey }) %>
+
+    <main class="ml-0 md:ml-60 p-6 md:p-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-black uppercase tracking-tight"><%= title %></h1>
+                    <p class="text-xs font-mono text-[#8B6E3C] mt-1"><%= data.length %> items</p>
+                </div>
+                <button onclick="openModal()" class="cms-btn cms-btn-primary">Add New</button>
+            </div>
+
+            <div id="items-list" class="space-y-3">
+                <% data.forEach(function(item) { %>
+                    <div class="cms-card p-5 flex items-center gap-4" data-id="<%= item.id %>">
+                        <% if (item.image_url) { %>
+                            <img src="<%= item.image_url %>" class="w-16 h-16 rounded object-cover border-2 border-[#6B4E26]">
+                        <% } %>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-bold uppercase tracking-tight text-sm truncate"><%= item.name || item.label || item.title || 'Untitled' %></h3>
+                            <p class="text-[10px] font-mono text-[#8B6E3C] truncate"><%= item.description || item.value || item.region || item.category || '' %></p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <% if (typeof item.is_active !== 'undefined') { %>
+                                <span class="text-[8px] font-mono font-bold uppercase px-2 py-1 rounded <%= item.is_active ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300' %>">
+                                    <%= item.is_active ? 'Active' : 'Inactive' %>
+                                </span>
+                            <% } %>
+                            <button onclick='editItem(<%= JSON.stringify(item) %>)' class="w-8 h-8 border border-[#6B4E26] rounded flex items-center justify-center hover:bg-[#4A3518] hover:border-[#C4A87A] transition-colors">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5 text-[#C4A87A]"></i>
+                            </button>
+                            <button onclick="deleteItem(<%= item.id %>)" class="w-8 h-8 border border-[#7f1d1d] rounded flex items-center justify-center hover:bg-red-900/50 hover:border-red-500 transition-colors">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5 text-red-400"></i>
+                            </button>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+
+            <% if (data.length === 0) { %>
+                <div class="cms-card p-12 text-center">
+                    <i data-lucide="inbox" class="w-12 h-12 text-[#6B4E26] mx-auto mb-4"></i>
+                    <p class="text-sm font-bold uppercase tracking-wider text-[#8B6E3C]">No items yet</p>
+                    <p class="text-[10px] font-mono text-[#6B4E26] mt-1">Click "Add New" to create your first item</p>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="cms-modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="cms-modal">
+            <div class="flex items-center justify-between mb-6">
+                <h2 id="modal-title" class="text-xl font-black uppercase tracking-tight">Add Item</h2>
+                <button onclick="closeModal()" class="w-8 h-8 border border-[#6B4E26] rounded flex items-center justify-center hover:bg-[#4A3518] transition-colors">
+                    <i data-lucide="x" class="w-4 h-4 text-[#8B6E3C]"></i>
+                </button>
+            </div>
+            <form id="item-form" onsubmit="saveItem(event)" class="space-y-4">
+                <input type="hidden" id="form-id" value="">
+                <div id="form-fields"></div>
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="cms-btn cms-btn-primary flex-1">Save</button>
+                    <button type="button" onclick="closeModal()" class="cms-btn cms-btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="cms-toast"></div>
+
+    <script>
+    lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+
+    const sectionKey = '<%= sectionKey %>';
+    const apiUrl = `/api/${sectionKey === 'community' ? 'community_programs' : sectionKey}`;
+
+    const fieldConfigs = {
+        products: [
+            { key: 'name', label: 'Name', type: 'text', required: true },
+            { key: 'slug', label: 'Slug', type: 'text', required: true },
+            { key: 'description', label: 'Description', type: 'textarea' },
+            { key: 'badge', label: 'Badge', type: 'text' },
+            { key: 'category', label: 'Category', type: 'text' },
+            { key: 'image_url', label: 'Image', type: 'image' },
+            { key: 'price', label: 'Price', type: 'number' },
+            { key: 'sort_order', label: 'Sort Order', type: 'number' },
+            { key: 'is_active', label: 'Active', type: 'checkbox' }
+        ],
+        subscriptions: [
+            { key: 'name', label: 'Name', type: 'text', required: true },
+            { key: 'slug', label: 'Slug', type: 'text', required: true },
+            { key: 'description', label: 'Description', type: 'text' },
+            { key: 'weight', label: 'Weight', type: 'text' },
+            { key: 'price', label: 'Price', type: 'number', required: true },
+            { key: 'features', label: 'Features (JSON array)', type: 'textarea' },
+            { key: 'is_popular', label: 'Popular', type: 'checkbox' },
+            { key: 'sort_order', label: 'Sort Order', type: 'number' },
+            { key: 'is_active', label: 'Active', type: 'checkbox' }
+        ],
+        events: [
+            { key: 'title', label: 'Title', type: 'text', required: true },
+            { key: 'description', label: 'Description', type: 'textarea' },
+            { key: 'event_date', label: 'Date (YYYY-MM-DD)', type: 'text' },
+            { key: 'event_month', label: 'Month (MAR)', type: 'text' },
+            { key: 'event_day', label: 'Day (15)', type: 'text' },
+            { key: 'sort_order', label: 'Sort Order', type: 'number' },
+            { key: 'is_active', label: 'Active', type: 'checkbox' }
+        ],
+        trails: [
+            { key: 'level', label: 'Level (1-3)', type: 'number', required: true },
+            { key: 'name', label: 'Name', type: 'text', required: true },
+            { key: 'description', label: 'Description', type: 'textarea' },
+            { key: 'duration', label: 'Duration', type: 'text' },
+            { key: 'difficulty', label: 'Difficulty', type: 'text' },
+            { key: 'features', label: 'Features (JSON array)', type: 'textarea' },
+            { key: 'is_popular', label: 'Popular', type: 'checkbox' },
+            { key: 'is_active', label: 'Active', type: 'checkbox' }
+        ],
+        partners: [
+            { key: 'name', label: 'Name', type: 'text', required: true },
+            { key: 'description', label: 'Description', type: 'textarea' },
+            { key: 'icon', label: 'Icon (Lucide)', type: 'text' },
+            { key: 'sort_order', label: 'Sort Order', type: 'number' },
+            { key: 'is_active', label: 'Active', type: 'checkbox' }
+        ],
+        community_programs: [
+            { key: 'title', label: 'Title', type: 'text', required: true },
+            { key: 'description', label: 'Description', type: 'textarea' },
+            { key: 'icon', label: 'Icon (Lucide)', type: 'text' },
+            { key: 'image_url', label: 'Image', type: 'image' },
+            { key: 'sort_order', label: 'Sort Order', type: 'number' },
+            { key: 'is_active', label: 'Active', type: 'checkbox' }
+        ],
+        outgrowers: [
+            { key: 'name', label: 'Name', type: 'text', required: true },
+            { key: 'region', label: 'Region', type: 'text' },
+            { key: 'description', label: 'Description', type: 'text' },
+            { key: 'icon', label: 'Icon (Lucide)', type: 'text' },
+            { key: 'sort_order', label: 'Sort Order', type: 'number' }
+        ],
+        stats: [
+            { key: 'label', label: 'Label', type: 'text', required: true },
+            { key: 'value', label: 'Value', type: 'text', required: true },
+            { key: 'sort_order', label: 'Sort Order', type: 'number' }
+        ],
+        navigation: [
+            { key: 'label', label: 'Label', type: 'text', required: true },
+            { key: 'href', label: 'Link', type: 'text', required: true },
+            { key: 'sort_order', label: 'Sort Order', type: 'number' },
+            { key: 'is_cta', label: 'CTA Button', type: 'checkbox' },
+            { key: 'is_active', label: 'Active', type: 'checkbox' }
+        ],
+        footer_links: [
+            { key: 'category', label: 'Category', type: 'text', required: true },
+            { key: 'label', label: 'Label', type: 'text', required: true },
+            { key: 'href', label: 'Link', type: 'text', required: true },
+            { key: 'sort_order', label: 'Sort Order', type: 'number' }
+        ],
+        gallery: [
+            { key: 'title', label: 'Title', type: 'text', required: true },
+            { key: 'description', label: 'Description', type: 'textarea' },
+            { key: 'image_url', label: 'Image', type: 'image', required: true },
+            { key: 'category', label: 'Category', type: 'text' },
+            { key: 'sort_order', label: 'Sort Order', type: 'number' },
+            { key: 'is_active', label: 'Active', type: 'checkbox' }
+        ]
+    };
+
+    function buildForm(item) {
+        const fields = fieldConfigs[sectionKey] || [];
+        const container = document.getElementById('form-fields');
+        container.innerHTML = '';
+
+        fields.forEach(f => {
+            const val = item ? (item[f.key] || '') : (f.type === 'checkbox' ? false : '');
+            const isJson = typeof val === 'object' ? JSON.stringify(val) : val;
+            let html = `<div><label class="cms-label">${f.label}</label>`;
+
+            if (f.type === 'image') {
+                html += `<div class="image-upload-zone" id="upload-zone-${f.key}">
+                    <input type="hidden" name="${f.key}" id="field-${f.key}" value="${isJson}">
+                    <div class="image-preview" id="preview-${f.key}">
+                        ${isJson ? `<img src="${isJson}" alt="Preview" style="max-width:100%;max-height:200px;border-radius:4px;">` : '<div class="placeholder-text">Click or drag to upload image</div>'}
+                    </div>
+                    <input type="file" accept="image/*" class="image-file-input" id="file-${f.key}" onchange="handleImageUpload(this, '${f.key}')">
+                    <div class="upload-progress hidden" id="progress-${f.key}">Uploading...</div>
+                </div>`;
+            } else if (f.type === 'textarea') {
+                html += `<textarea name="${f.key}" class="cms-textarea" ${f.required ? 'required' : ''}>${isJson}</textarea>`;
+            } else if (f.type === 'checkbox') {
+                html += `<label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="${f.key}" ${val ? 'checked' : ''} class="w-4 h-4 accent-[#C4A87A]">
+                    <span class="text-xs text-[#8B6E3C]">Enable</span>
+                </label>`;
+            } else {
+                html += `<input type="${f.type}" name="${f.key}" value="${isJson}" class="cms-input" ${f.required ? 'required' : ''}>`;
+            }
+            html += '</div>';
+            container.innerHTML += html;
+        });
+
+        document.querySelectorAll('.image-upload-zone').forEach(zone => {
+            zone.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'IMG') {
+                    zone.querySelector('.image-file-input').click();
+                }
+            });
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    const input = zone.querySelector('.image-file-input');
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    input.files = dt.files;
+                    handleImageUpload(input, zone.querySelector('input[type="hidden"]').name);
+                }
+            });
+        });
+    }
+
+    function handleImageUpload(input, fieldKey) {
+        const file = input.files[0];
+        if (!file) return;
+        const progress = document.getElementById('progress-' + fieldKey);
+        const preview = document.getElementById('preview-' + fieldKey);
+        progress.classList.remove('hidden');
+
+        compressImage(file, 1920, 0.82).then(blob => {
+            const formData = new FormData();
+            formData.append('image', blob, file.name);
+            return fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content },
+                body: formData,
+                credentials: 'include'
+            });
+        })
+        .then(r => r.json())
+        .then(data => {
+            progress.classList.add('hidden');
+            if (data.url) {
+                document.getElementById('field-' + fieldKey).value = data.url;
+                preview.innerHTML = '<img src="' + data.url + '" alt="Preview" style="max-width:100%;max-height:200px;border-radius:4px;">';
+            } else {
+                alert('Upload failed: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => {
+            progress.classList.add('hidden');
+            alert('Upload error: ' + err.message);
+        });
+    }
+
+    function compressImage(file, maxDim, quality) {
+        return new Promise((resolve) => {
+            if (file.type === 'image/svg+xml' || file.size < 200 * 1024) {
+                return resolve(file);
+            }
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                let w = img.width, h = img.height;
+                if (w > maxDim || h > maxDim) {
+                    const ratio = Math.min(maxDim / w, maxDim / h);
+                    w = Math.round(w * ratio);
+                    h = Math.round(h * ratio);
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                canvas.toBlob((blob) => {
+                    URL.revokeObjectURL(url);
+                    resolve(blob || file);
+                }, file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
+            };
+            img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+            img.src = url;
+        });
+    }
+
+    function openModal(item) {
+        document.getElementById('form-id').value = item ? item.id : '';
+        document.getElementById('modal-title').textContent = item ? 'Edit Item' : 'Add Item';
+        buildForm(item);
+        document.getElementById('modal').classList.add('active');
+        lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+    }
+
+    function closeModal() {
+        document.getElementById('modal').classList.remove('active');
+    }
+
+    function editItem(item) {
+        openModal(item);
+    }
+
+    function saveItem(e) {
+        e.preventDefault();
+        const id = document.getElementById('form-id').value;
+        const form = document.getElementById('item-form');
+        const data = {};
+
+        new FormData(form).forEach((val, key) => {
+            if (key === 'is_active' || key === 'is_popular' || key === 'is_cta') {
+                data[key] = form.querySelector(`[name="${key}"]`).checked ? 1 : 0;
+            } else {
+                data[key] = val;
+            }
+        });
+
+        // Handle unchecked checkboxes
+        ['is_active', 'is_popular', 'is_cta'].forEach(key => {
+            if (!(key in data)) data[key] = 0;
+        });
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `${apiUrl}/${id}` : apiUrl;
+
+        fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+            },
+            credentials: 'include',
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.error) throw new Error(d.error);
+            showToast(id ? 'Item updated!' : 'Item created!');
+            setTimeout(() => location.reload(), 500);
+        })
+        .catch(e => showToast('Error: ' + e.message));
+    }
+
+    function deleteItem(id) {
+        if (!confirm('Delete this item?')) return;
+        fetch(`${apiUrl}/${id}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content },
+            credentials: 'include'
+        })
+        .then(r => r.json())
+        .then(d => {
+            showToast('Item deleted!');
+            document.querySelector(`[data-id="${id}"]`).remove();
+        })
+        .catch(e => showToast('Error deleting'));
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+    </script>
+</body>
+</html>

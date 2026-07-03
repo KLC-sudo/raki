@@ -1,0 +1,27 @@
+* { font-family: 'Inter', sans-serif; }
+.font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+::selection { background: #4A3518; color: #F5F0E8; }
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+.marquee-track { animation: marquee 20s linear infinite; }
+
+@keyframes heroScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+.animate-hero-scroll { animation: heroScroll 30s linear infinite; }
+
+.hard-shadow { box-shadow: 5px 5px 0px #4A3518; }
+.hard-shadow-sm { box-shadow: 4px 4px 0px #4A3518; }
+.hard-shadow-lg { box-shadow: 7px 7px 0px #4A3518; }
+.hard-shadow-white { box-shadow: 5px 5px 0px #F5F0E8; }
+.hard-shadow-sand { box-shadow: 5px 5px 0px #D4C4A8; }
+
+.card-hover { transition: transform 0.15s, box-shadow 0.15s; }
+.card-hover:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0px #4A3518;
+}

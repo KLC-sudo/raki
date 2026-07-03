@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — RAKI CMS</title>
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="bg-[#1A1008] min-h-screen text-[#F5F0E8]">
+    <%- include('partials/nav', { page: 'settings' }) %>
+
+    <main class="ml-0 md:ml-60 p-6 md:p-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-black uppercase tracking-tight">Settings</h1>
+                    <p class="text-xs font-mono text-[#8B6E3C] mt-1">Control every aspect of your site</p>
+                </div>
+                <button onclick="saveAllSettings()" class="cms-btn cms-btn-primary">Save All</button>
+            </div>
+
+            <form id="settings-form" class="space-y-8">
+                <% Object.keys(grouped).forEach(function(category) { %>
+                    <div class="cms-card p-6" id="<%= category %>">
+                        <h2 class="text-lg font-black uppercase tracking-tight mb-5 flex items-center gap-2">
+                            <i data-lucide="<%= category === 'general' ? 'globe' : category === 'design' ? 'palette' : category === 'hero' ? 'layout' : category === 'sections' ? 'layers' : category === 'subscribe' ? 'refresh-cw' : category === 'social' ? 'share-2' : 'settings' %>" class="w-5 h-5 text-[#C4A87A]"></i>
+                            <%= category.charAt(0).toUpperCase() + category.slice(1) %>
+                        </h2>
+                        <div class="space-y-4">
+                            <% grouped[category].forEach(function(setting) { %>
+                                <div>
+                                    <label class="cms-label" for="setting-<%= setting.key %>"><%= setting.key.replace(/_/g, ' ').replace('show ', '').replace('section_', '') %></label>
+                                    <% if (setting.type === 'textarea') { %>
+                                        <textarea id="setting-<%= setting.key %>" name="<%= setting.key %>" class="cms-textarea" rows="3" data-key="<%= setting.key %>" data-category="<%= setting.category %>"><%= setting.value %></textarea>
+                                    <% } else if (setting.type === 'color') { %>
+                                        <div class="flex items-center gap-3">
+                                            <input type="color" id="setting-<%= setting.key %>-picker" value="<%= setting.value %>" class="w-10 h-10 rounded border-2 border-[#6B4E26] cursor-pointer bg-transparent" onchange="document.getElementById('setting-<%= setting.key %>').value = this.value">
+                                            <input type="text" id="setting-<%= setting.key %>" name="<%= setting.key %>" value="<%= setting.value %>" class="cms-input flex-1" onchange="document.getElementById('setting-<%= setting.key %>-picker').value = this.value" data-key="<%= setting.key %>" data-category="<%= setting.category %>">
+                                        </div>
+                                    <% } else if (setting.type === 'toggle') { %>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" name="<%= setting.key %>" <%= setting.value === '1' ? 'checked' : '' %> data-key="<%= setting.key %>" data-category="<%= setting.category %>" onchange="this.value = this.checked ? '1' : '0'">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    <% } else if (setting.type === 'image') { %>
+                                        <div class="image-upload-zone" id="upload-zone-<%= setting.key %>">
+                                            <input type="hidden" name="<%= setting.key %>" id="field-<%= setting.key %>" value="<%= setting.value %>" data-key="<%= setting.key %>" data-category="<%= setting.category %>">
+                                            <div class="image-preview" id="preview-<%= setting.key %>">
+                                                <% if (setting.value) { %>
+                                                    <img src="<%= setting.value %>" alt="Logo" style="max-width:100%;max-height:120px;border-radius:4px;">
+                                                <% } else { %>
+                                                    <div class="placeholder-text">Click or drag to upload image</div>
+                                                <% } %>
+                                            </div>
+                                            <input type="file" accept="image/png,image/jpeg,image/jpg" class="image-file-input" id="file-<%= setting.key %>" onchange="handleSettingsImageUpload(this, '<%= setting.key %>')">
+                                            <div class="upload-progress hidden" id="progress-<%= setting.key %>">Uploading...</div>
+                                        </div>
+                                    <% } else { %>
+                                        <input type="text" id="setting-<%= setting.key %>" name="<%= setting.key %>" value="<%= setting.value %>" class="cms-input" data-key="<%= setting.key %>" data-category="<%= setting.category %>">
+                                    <% } %>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                <% }); %>
+            </form>
+        </div>
+    </main>
+
+    <div id="toast" class="cms-toast"></div>
+
+    <script>
+    lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function compressImage(file, maxDim, quality) {
+        return new Promise((resolve) => {
+            if (file.type === 'image/svg+xml' || file.size < 200 * 1024) {
+                return resolve(file);
+            }
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                let w = img.width, h = img.height;
+                if (w > maxDim || h > maxDim) {
+                    const ratio = Math.min(maxDim / w, maxDim / h);
+                    w = Math.round(w * ratio);
+                    h = Math.round(h * ratio);
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                canvas.toBlob((blob) => {
+                    URL.revokeObjectURL(url);
+                    resolve(blob || file);
+                }, file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
+            };
+            img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+            img.src = url;
+        });
+    }
+
+    function handleSettingsImageUpload(input, fieldKey) {
+        const file = input.files[0];
+        if (!file) return;
+        const progress = document.getElementById('progress-' + fieldKey);
+        const preview = document.getElementById('preview-' + fieldKey);
+        progress.classList.remove('hidden');
+
+        compressImage(file, 800, 0.85).then(blob => {
+            const formData = new FormData();
+            formData.append('image', blob, file.name);
+            return fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content },
+                body: formData,
+                credentials: 'include'
+            });
+        })
+        .then(r => r.json())
+        .then(data => {
+            progress.classList.add('hidden');
+            if (data.url) {
+                document.getElementById('field-' + fieldKey).value = data.url;
+                preview.innerHTML = '<img src="' + data.url + '" alt="Preview" style="max-width:100%;max-height:120px;border-radius:4px;">';
+            } else {
+                alert('Upload failed: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => {
+            progress.classList.add('hidden');
+            alert('Upload error: ' + err.message);
+        });
+    }
+
+    document.querySelectorAll('.image-upload-zone').forEach(zone => {
+        zone.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'IMG') {
+                zone.querySelector('.image-file-input').click();
+            }
+        });
+        zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                const input = zone.querySelector('.image-file-input');
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                input.files = dt.files;
+                const hidden = zone.querySelector('input[type="hidden"]');
+                handleSettingsImageUpload(input, hidden.dataset.key);
+            }
+        });
+    });
+
+    function saveAllSettings() {
+        const form = document.getElementById('settings-form');
+        const inputs = form.querySelectorAll('input, textarea, select');
+        const items = [];
+
+        inputs.forEach(input => {
+            const key = input.dataset ? input.dataset.key : null;
+            if (!key) return;
+            const cat = input.dataset.category || 'general';
+            let val = input.value;
+            let type = 'text';
+            if (input.tagName === 'TEXTAREA') {
+                type = 'textarea';
+            } else if (input.type === 'checkbox') {
+                val = input.checked ? '1' : '0';
+                type = 'toggle';
+            } else if (input.type === 'color') {
+                type = 'color';
+            } else if (input.type === 'hidden' && (input.id || '').startsWith('field-')) {
+                type = 'image';
+            }
+            items.push({ key, value: val, type, category: cat });
+        });
+
+        fetch('/api/settings', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+            },
+            credentials: 'include',
+            body: JSON.stringify(items)
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) showToast('Settings saved!');
+        })
+        .catch(e => showToast('Error saving settings'));
+    }
+    </script>
+
+    <script>
+    function filterSettingsByHash() {
+        var hash = window.location.hash.replace('#', '');
+        var cards = document.querySelectorAll('#settings-form .cms-card');
+        if (hash === 'visibility') {
+            cards.forEach(function(card) {
+                card.style.display = card.id === 'visibility' ? '' : 'none';
+            });
+        } else if (hash) {
+            cards.forEach(function(card) {
+                card.style.display = card.id === hash ? '' : 'none';
+            });
+        } else {
+            cards.forEach(function(card) {
+                card.style.display = card.id === 'visibility' ? 'none' : '';
+            });
+        }
+
+        var visNav = document.getElementById('nav-visibility');
+        var setNav = document.getElementById('nav-settings');
+        if (visNav && setNav) {
+            visNav.classList.remove('bg-[#4A3518]', 'text-[#F5F0E8]');
+            visNav.classList.add('text-[#8B6E3C]');
+            setNav.classList.remove('bg-[#4A3518]', 'text-[#F5F0E8]');
+            setNav.classList.add('text-[#8B6E3C]');
+            if (hash === 'visibility') {
+                visNav.classList.add('bg-[#4A3518]', 'text-[#F5F0E8]');
+                visNav.classList.remove('text-[#8B6E3C]');
+            } else {
+                setNav.classList.add('bg-[#4A3518]', 'text-[#F5F0E8]');
+                setNav.classList.remove('text-[#8B6E3C]');
+            }
+        }
+    }
+
+    filterSettingsByHash();
+    window.addEventListener('hashchange', filterSettingsByHash);
+    </script>
+</body>
+</html>

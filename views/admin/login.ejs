@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login — RAKI CMS</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>* { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-[#1A1008] min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-sm">
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-[#4A3518] rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-[#F5F0E8]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg>
+            </div>
+            <h1 class="text-2xl font-black text-[#F5F0E8] uppercase tracking-tight">RAKI CMS</h1>
+            <p class="text-[10px] font-mono text-[#8B6E3C] uppercase tracking-[0.2em] mt-1">Admin Panel</p>
+        </div>
+
+        <div class="bg-[#4A3518] border-2 border-[#6B4E26] rounded-lg p-8" style="box-shadow: 7px 7px 0px #2D1F0E;">
+            <% if (error) { %>
+                <div class="bg-red-900/50 border border-red-600 text-red-200 text-xs px-4 py-3 rounded-md mb-6 font-mono">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form method="POST" action="/admin/login" class="space-y-5">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div>
+                    <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-[#C4A87A] mb-1.5">Password</label>
+                    <input type="password" name="password" required autofocus
+                        class="w-full px-4 py-3 border-2 border-[#6B4E26] rounded-md focus:border-[#A8895C] outline-none text-sm bg-[#2D1F0E] text-[#F5F0E8] placeholder-[#6B4E26]"
+                        placeholder="Enter admin password">
+                </div>
+                <button type="submit"
+                    class="w-full bg-[#F5F0E8] text-[#4A3518] font-bold text-sm uppercase tracking-wider py-3.5 rounded-md border-2 border-[#F5F0E8] hover:bg-transparent hover:text-[#F5F0E8] transition-colors">
+                    Sign In
+                </button>
+            </form>
+        </div>
+
+        <p class="text-center text-[9px] font-mono text-[#6B4E26] mt-6 uppercase tracking-wider">© RAKI Coffee Co.</p>
+    </div>
+</body>
+</html>
