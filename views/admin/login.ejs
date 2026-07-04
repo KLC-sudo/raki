@@ -27,6 +27,7 @@
             <% } %>
 
             <form method="POST" action="/admin/login" class="space-y-5">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div>
                     <label class="block text-[9px] font-mono font-bold uppercase tracking-widest text-[#C4A87A] mb-1.5">Password</label>
                     <input type="password" name="password" required autofocus
