@@ -194,7 +194,8 @@ const DEFAULTS = {
 for (const [collection, defaults] of Object.entries(DEFAULTS)) {
   const existing = db[collection];
   if (collection === 'settings') {
-    const existingMap = new Map(existing.map(s => [s.key, s]));
+    const existingArr = Array.isArray(existing) ? existing : [];
+    const existingMap = new Map(existingArr.map(s => [s.key, s]));
     const merged = defaults.map(d => {
       const e = existingMap.get(d.key);
       return e ? { ...d, value: e.value } : d;
