@@ -505,7 +505,7 @@
                     <p class="text-sm text-bark-500 leading-relaxed mb-8"><%= settings.section_location_description %></p>
 
                     <div class="border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden mb-8 h-72 relative bg-bark-100">
-                        <img src="https://picsum.photos/seed/uganda-landscape-green/700/350.jpg" alt="Location" class="w-full h-full object-cover opacity-60">
+                        <img src="<%= settings.section_location_image || 'https://picsum.photos/seed/uganda-landscape-green/700/350.jpg' %>" alt="Location" class="w-full h-full object-cover opacity-60">
                         <div class="absolute inset-0 flex items-center justify-center">
                             <div class="text-center">
                                 <div class="w-14 h-14 bg-bark-700 rounded-md flex items-center justify-center mx-auto mb-2">

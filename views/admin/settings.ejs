@@ -57,12 +57,31 @@
                                             <input type="hidden" name="<%= setting.key %>" id="field-<%= setting.key %>" value="<%= setting.value %>" data-key="<%= setting.key %>" data-category="<%= setting.category %>">
                                             <div class="image-preview" id="preview-<%= setting.key %>">
                                                 <% if (setting.value) { %>
-                                                    <img src="<%= setting.value %>" alt="Logo" style="max-width:100%;max-height:120px;border-radius:4px;">
+                                                    <img src="<%= setting.value %>" alt="Preview" style="max-width:100%;max-height:120px;border-radius:4px;">
                                                 <% } else { %>
                                                     <div class="placeholder-text">Click or drag to upload image</div>
                                                 <% } %>
                                             </div>
                                             <input type="file" accept="image/png,image/jpeg,image/jpg" class="image-file-input" id="file-<%= setting.key %>" onchange="handleSettingsImageUpload(this, '<%= setting.key %>')">
+                                            <div class="upload-progress hidden" id="progress-<%= setting.key %>">Uploading...</div>
+                                        </div>
+                                    <% } else if (setting.type === 'multi-image') { %>
+                                        <div class="multi-image-upload-zone" id="upload-zone-<%= setting.key %>">
+                                            <input type="hidden" name="<%= setting.key %>" id="field-<%= setting.key %>" value="<%= setting.value %>" data-key="<%= setting.key %>" data-category="<%= setting.category %>">
+                                            <div class="multi-image-previews" id="previews-<%= setting.key %>">
+                                                <% var images = (setting.value || '').split(',').map(s => s.trim()).filter(Boolean); %>
+                                                <% images.forEach(function(img, i) { %>
+                                                    <div class="multi-image-thumb" data-index="<%= i %>">
+                                                        <img src="<%= img %>" alt="Image <%= i + 1 %>">
+                                                        <button type="button" class="remove-multi-image" onclick="removeMultiImage('<%= setting.key %>', <%= i %>)">&times;</button>
+                                                    </div>
+                                                <% }); %>
+                                            </div>
+                                            <label class="multi-image-add-btn">
+                                                <i data-lucide="plus" class="w-5 h-5"></i>
+                                                <span>Add Image</span>
+                                                <input type="file" accept="image/png,image/jpeg,image/jpg" class="image-file-input" id="file-<%= setting.key %>" onchange="handleMultiImageUpload(this, '<%= setting.key %>')" multiple>
+                                            </label>
                                             <div class="upload-progress hidden" id="progress-<%= setting.key %>">Uploading...</div>
                                         </div>
                                     <% } else { %>
@@ -144,6 +163,66 @@
             progress.classList.add('hidden');
             alert('Upload error: ' + err.message);
         });
+    }
+
+    function handleMultiImageUpload(input, fieldKey) {
+        const files = Array.from(input.files);
+        if (!files.length) return;
+        const progress = document.getElementById('progress-' + fieldKey);
+        const field = document.getElementById('field-' + fieldKey);
+        const previews = document.getElementById('previews-' + fieldKey);
+        progress.classList.remove('hidden');
+
+        let uploaded = 0;
+        const urls = (field.value || '').split(',').map(s => s.trim()).filter(Boolean);
+
+        files.forEach(file => {
+            compressImage(file, 800, 0.85).then(blob => {
+                const formData = new FormData();
+                formData.append('image', blob, file.name);
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+                return fetch('/api/upload', { method: 'POST', body: formData, credentials: 'include', headers: { 'x-csrf-token': csrfToken } });
+            })
+            .then(r => r.json())
+            .then(data => {
+                uploaded++;
+                if (data.url) {
+                    urls.push(data.url);
+                }
+                if (uploaded === files.length) {
+                    field.value = urls.join(',');
+                    renderMultiImagePreviews(fieldKey, urls);
+                    progress.classList.add('hidden');
+                }
+            })
+            .catch(err => {
+                uploaded++;
+                if (uploaded === files.length) {
+                    progress.classList.add('hidden');
+                    alert('Upload error: ' + err.message);
+                }
+            });
+        });
+        input.value = '';
+    }
+
+    function renderMultiImagePreviews(fieldKey, urls) {
+        const previews = document.getElementById('previews-' + fieldKey);
+        previews.innerHTML = urls.map(function(url, i) {
+            return '<div class="multi-image-thumb" data-index="' + i + '">' +
+                '<img src="' + url + '" alt="Image ' + (i + 1) + '">' +
+                '<button type="button" class="remove-multi-image" onclick="removeMultiImage(\'' + fieldKey + '\', ' + i + ')">&times;</button>' +
+                '</div>';
+        }).join('');
+        lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+    }
+
+    function removeMultiImage(fieldKey, index) {
+        const field = document.getElementById('field-' + fieldKey);
+        const urls = (field.value || '').split(',').map(s => s.trim()).filter(Boolean);
+        urls.splice(index, 1);
+        field.value = urls.join(',');
+        renderMultiImagePreviews(fieldKey, urls);
     }
 
     document.querySelectorAll('.image-upload-zone').forEach(zone => {
