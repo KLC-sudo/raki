@@ -115,6 +115,59 @@ function sanitizeInput(obj) {
   return clean;
 }
 
+// Security: Block common bot scanner paths
+const BLOCKED_PATHS = /^\/(\.git|\.env|\.htaccess|\.htpasswd|\.svn|\.hg|wp-admin|wp-login|wp-json|xmlrpc\.php|credentials|debug|\.well-known|vendor\/|node_modules|composer\.json|package\.json|\.DS_Store)/i;
+app.use((req, res, next) => {
+  if (BLOCKED_PATHS.test(req.path) || BLOCKED_PATHS.test(decodeURIComponent(req.path))) {
+    return res.status(404).end();
+  }
+  next();
+});
+
+// Security: Block suspicious User-Agents
+const BLOCKED_UA = /sqlmap|nikto|nmap|masscan|zgrab|dirbuster|gobuster|wfuzz|ffuf|nuclei|httpx|censys|shodan|majestic|dotbot|semrush|ahrefsbot|mj12bot|petalbot|yandexbot|bingpreview/i;
+app.use((req, res, next) => {
+  const ua = req.headers['user-agent'] || '';
+  if (BLOCKED_UA.test(ua)) {
+    return res.status(403).end();
+  }
+  next();
+});
+
+// Security: Headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-XSS-Protection', '0');
+  res.removeHeader('X-Powered-By');
+  next();
+});
+
+// Security: Global rate limiter (100 requests/min per IP)
+const globalRateLimit = new Map();
+app.use((req, res, next) => {
+  const ip = req.ip;
+  const now = Date.now();
+  const windowMs = 60 * 1000;
+  const maxReqs = 100;
+  const hits = (globalRateLimit.get(ip) || []).filter(t => now - t < windowMs);
+  if (hits.length >= maxReqs) {
+    return res.status(429).end();
+  }
+  hits.push(now);
+  globalRateLimit.set(ip, hits);
+  // Cleanup stale entries every 1000 requests
+  if (hits.length === 1) {
+    for (const [key, val] of globalRateLimit) {
+      const fresh = val.filter(t => now - t < windowMs);
+      if (fresh.length === 0) globalRateLimit.delete(key);
+      else globalRateLimit.set(key, fresh);
+    }
+  }
+  next();
+});
+
 // Security: Validate numeric ID
 function isValidId(id) { return /^\d+$/.test(id); }
 
