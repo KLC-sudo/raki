@@ -6,7 +6,9 @@ const db = readDb();
 // ========== SETTINGS ==========
 db.settings = [
   // General
-  { key: 'site_name', value: 'RAKI Coffee Co.', type: 'text', category: 'general' },
+  { key: 'site_logo', value: '', type: 'image', category: 'general' },
+  { key: 'logo_size', value: '40', type: 'range', category: 'general' },
+  { key: 'copyright', value: '2025 RAKI Coffee Co. · Mukono, Namataba · Uganda', type: 'text', category: 'general' },
   { key: 'site_tagline', value: 'Crafting experiences with soul, creativity & love', type: 'text', category: 'general' },
   { key: 'site_description', value: "From Uganda's highlands to your cup.", type: 'textarea', category: 'general' },
   { key: 'site_location', value: 'Mukono, Uganda', type: 'text', category: 'general' },
@@ -14,9 +16,6 @@ db.settings = [
   { key: 'site_email', value: 'ubirucent@gmail.com', type: 'text', category: 'general' },
   { key: 'site_hours', value: 'Mon-Sat: 7am-6pm', type: 'text', category: 'general' },
   { key: 'site_address', value: 'Sezibwa Road, Mukono, Uganda', type: 'text', category: 'general' },
-  { key: 'site_ceo', value: 'Mubiru Vincent, CEO', type: 'text', category: 'general' },
-  { key: 'site_logo', value: '', type: 'image', category: 'general' },
-  { key: 'copyright', value: '2025 RAKI Coffee Co. · Mukono, Namataba · Uganda', type: 'text', category: 'general' },
   // Design - Colors
   { key: 'color_bg', value: '#FAF7F2', type: 'color', category: 'design' },
   { key: 'color_surface', value: '#FFFFFF', type: 'color', category: 'design' },

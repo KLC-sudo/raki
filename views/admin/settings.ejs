@@ -46,6 +46,11 @@
                                             <input type="checkbox" name="<%= setting.key %>" <%= setting.value === '1' ? 'checked' : '' %> data-key="<%= setting.key %>" data-category="<%= setting.category %>" onchange="this.value = this.checked ? '1' : '0'">
                                             <span class="toggle-slider"></span>
                                         </label>
+                                    <% } else if (setting.type === 'range') { %>
+                                        <div class="flex items-center gap-4">
+                                            <input type="range" min="16" max="120" step="2" id="setting-<%= setting.key %>" name="<%= setting.key %>" value="<%= setting.value %>" class="flex-1 accent-[#C4A87A] h-2 cursor-pointer" data-key="<%= setting.key %>" data-category="<%= setting.category %>" oninput="document.getElementById('range-val-<%= setting.key %>').textContent = this.value + 'px'">
+                                            <span id="range-val-<%= setting.key %>" class="text-sm font-mono text-[#C4A87A] w-14 text-right"><%= setting.value %>px</span>
+                                        </div>
                                     <% } else if (setting.type === 'image') { %>
                                         <div class="image-upload-zone" id="upload-zone-<%= setting.key %>">
                                             <input type="hidden" name="<%= setting.key %>" id="field-<%= setting.key %>" value="<%= setting.value %>" data-key="<%= setting.key %>" data-category="<%= setting.category %>">
@@ -182,6 +187,8 @@
                 type = 'color';
             } else if (input.type === 'hidden' && (input.id || '').startsWith('field-')) {
                 type = 'image';
+            } else if (input.type === 'range') {
+                type = 'range';
             }
             items.push({ key, value: val, type, category: cat });
         });

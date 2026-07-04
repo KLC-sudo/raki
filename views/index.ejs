@@ -7,7 +7,7 @@
     <% if (typeof visitorId !== 'undefined' && visitorId) { %>
     <meta name="visitor-id" content="<%= visitorId %>">
     <% } %>
-    <title><%= settings.site_name %> — Meraki</title>
+    <title>RAKI Coffee Co. — Meraki</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="/css/tailwind.css">
     <style>
@@ -28,16 +28,12 @@
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <a href="#hero" class="flex items-center gap-3">
                 <% if (settings.site_logo) { %>
-                    <img src="<%= settings.site_logo %>" alt="<%= settings.site_name %>" class="h-10 w-auto">
+                    <img src="<%= settings.site_logo %>" alt="RAKI" class="w-auto" style="height: <%= settings.logo_size || 40 %>px;">
                 <% } else { %>
-                    <div class="w-10 h-10 bg-bark-700 rounded-md flex items-center justify-center">
+                    <div style="height: <%= settings.logo_size || 40 %>px; width: <%= settings.logo_size || 40 %>px;" class="bg-bark-700 rounded-md flex items-center justify-center">
                         <i data-lucide="coffee" class="w-5 h-5 text-sand"></i>
                     </div>
                 <% } %>
-                <div>
-                    <span class="text-xl font-black tracking-tight text-bark-700 uppercase"><%= settings.site_name.replace(' Coffee Co.', '').replace(' Co.', '') %></span>
-                    <span class="block text-[9px] font-mono font-bold tracking-[0.25em] text-bark-400 uppercase -mt-0.5">coffee co.</span>
-                </div>
             </a>
 
             <div class="hidden md:flex items-center gap-1">
@@ -451,7 +447,7 @@
                         <div class="w-16 h-16 bg-bark-700 rounded-lg flex items-center justify-center mx-auto mb-4">
                             <i data-lucide="check" class="w-8 h-8 text-sand"></i>
                         </div>
-                        <h4 class="text-xl font-black uppercase tracking-tight mb-1">Welcome to <%= settings.site_name.replace(' Coffee Co.', '').replace(' Co.', '') %>!</h4>
+                        <h4 class="text-xl font-black uppercase tracking-tight mb-1">Welcome to RAKI!</h4>
                         <p class="text-xs text-bark-400 font-mono">Your first box is on its way. Check your email.</p>
                     </div>
                     <p class="text-[9px] font-mono text-bark-400 mt-4 text-center uppercase tracking-wider">Cancel anytime · Free shipping · 100% guaranteed</p>
@@ -512,7 +508,7 @@
                                 <div class="w-14 h-14 bg-bark-700 rounded-md flex items-center justify-center mx-auto mb-2">
                                     <i data-lucide="map-pin" class="w-7 h-7 text-sand"></i>
                                 </div>
-                                <p class="text-sm font-black uppercase text-bark-700"><%= settings.site_name %></p>
+                                <p class="text-sm font-black uppercase text-bark-700">RAKI Coffee Co.</p>
                                 <p class="text-[9px] font-mono text-bark-500">Near Sezibwa Falls, Mukono</p>
                             </div>
                         </div>
@@ -634,16 +630,12 @@
                 <div class="col-span-2">
                     <div class="flex items-center gap-3 mb-4">
                         <% if (settings.site_logo) { %>
-                            <img src="<%= settings.site_logo %>" alt="<%= settings.site_name %>" class="h-10 w-auto">
+                            <img src="<%= settings.site_logo %>" alt="RAKI" class="w-auto" style="height: <%= settings.logo_size || 40 %>px;">
                         <% } else { %>
-                            <div class="w-10 h-10 bg-sand rounded-md flex items-center justify-center">
+                            <div style="height: <%= settings.logo_size || 40 %>px; width: <%= settings.logo_size || 40 %>px;" class="bg-sand rounded-md flex items-center justify-center">
                                 <i data-lucide="coffee" class="w-5 h-5 text-bark-700"></i>
                             </div>
                         <% } %>
-                        <div>
-                            <span class="text-xl font-black tracking-tight text-sand uppercase"><%= settings.site_name.replace(' Coffee Co.', '').replace(' Co.', '') %></span>
-                            <span class="block text-[8px] font-mono font-bold tracking-[0.3em] text-bark-400 uppercase -mt-0.5">coffee co.</span>
-                        </div>
                     </div>
                     <p class="text-xs text-bark-500 leading-relaxed mb-4 max-w-xs font-mono"><%= settings.site_tagline %> — <%= settings.site_description %></p>
                     <div class="flex gap-2">
@@ -669,8 +661,6 @@
             <div class="border-t-2 border-bark-700 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="text-[9px] font-mono text-bark-600 uppercase tracking-wider">© <%= settings.copyright %></p>
                 <div class="flex items-center gap-4">
-                    <p class="text-[9px] font-mono text-bark-600"><%= settings.site_ceo %></p>
-                    <span class="text-bark-700">|</span>
                     <p class="text-[9px] font-mono text-bark-600"><%= settings.site_phone %></p>
                     <span class="text-bark-700">|</span>
                     <button id="admin-triple" onclick="adminTripleClick()" class="text-[8px] font-mono text-bark-700 opacity-20 hover:opacity-60 transition-opacity cursor-default select-none" title="·">
