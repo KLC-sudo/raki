@@ -1,3 +1,6 @@
+<% if (typeof siteSettings !== 'undefined' && siteSettings) { %>
+<style>:root { --theme-color-text-muted: <%= siteSettings.color_text_muted || '#8B6E3C' %>; }</style>
+<% } %>
 <aside class="hidden md:flex fixed top-0 left-0 bottom-0 w-60 bg-[#2D1F0E] border-r-2 border-[#4A3518] flex-col z-40">
     <div class="p-5 border-b-2 border-[#4A3518]">
         <a href="/admin" class="flex items-center gap-3">
@@ -13,57 +16,57 @@
 
     <nav class="flex-1 overflow-y-auto py-3 px-3">
         <p class="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-[#6B4E26] px-3 mb-2">Content</p>
-        <a href="/admin/products" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'products' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/products" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'products' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="package" class="w-4 h-4"></i> Products
         </a>
-        <a href="/admin/subscriptions" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'subscriptions' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/subscriptions" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'subscriptions' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="refresh-cw" class="w-4 h-4"></i> Subscriptions
         </a>
-        <a href="/admin/events" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'events' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/events" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'events' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="calendar" class="w-4 h-4"></i> Events
         </a>
-        <a href="/admin/trails" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'trails' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/trails" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'trails' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="mountain" class="w-4 h-4"></i> Trails
         </a>
-        <a href="/admin/partners" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'partners' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/partners" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'partners' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="handshake" class="w-4 h-4"></i> Partners
         </a>
-        <a href="/admin/community" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'community' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/community" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'community' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="heart-handshake" class="w-4 h-4"></i> Community
         </a>
-        <a href="/admin/outgrowers" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'outgrowers' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/outgrowers" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'outgrowers' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="map-pin" class="w-4 h-4"></i> Outgrowers
         </a>
-        <a href="/admin/gallery" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'gallery' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/gallery" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'gallery' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="image" class="w-4 h-4"></i> Gallery
         </a>
-        <a href="/admin/stats" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'stats' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/stats" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'stats' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Statistics
         </a>
-        <a href="/admin/analytics" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'analytics' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/analytics" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'analytics' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="activity" class="w-4 h-4"></i> Analytics
         </a>
 
         <p class="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-[#6B4E26] px-3 mb-2 mt-5">Design</p>
-        <a href="/admin/settings#visibility" id="nav-visibility" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8] transition-colors">
+        <a href="/admin/settings#visibility" id="nav-visibility" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8] transition-colors">
             <i data-lucide="eye" class="w-4 h-4"></i> Visibility
         </a>
-        <a href="/admin/settings" id="nav-settings" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8] transition-colors">
+        <a href="/admin/settings" id="nav-settings" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8] transition-colors">
             <i data-lucide="settings" class="w-4 h-4"></i> Settings
         </a>
-        <a href="/admin/navigation" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'navigation' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/navigation" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'navigation' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="menu" class="w-4 h-4"></i> Navigation
         </a>
-        <a href="/admin/footer" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'footer' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
+        <a href="/admin/footer" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider <%= page === 'footer' ? 'bg-[#4A3518] text-[#F5F0E8]' : 'text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8]' %> transition-colors">
             <i data-lucide="layout-template" class="w-4 h-4"></i> Footer
         </a>
     </nav>
 
     <div class="p-3 border-t-2 border-[#4A3518]">
-        <a href="/" target="_blank" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-[#8B6E3C] hover:bg-[#4A3518] hover:text-[#F5F0E8] transition-colors">
+        <a href="/" target="_blank" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-bark-500 hover:bg-[#4A3518] hover:text-[#F5F0E8] transition-colors">
             <i data-lucide="external-link" class="w-4 h-4"></i> View Site
         </a>
-        <a href="/admin/logout" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-[#8B6E3C] hover:bg-red-900/50 hover:text-red-300 transition-colors">
+        <a href="/admin/logout" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-bark-500 hover:bg-red-900/50 hover:text-red-300 transition-colors">
             <i data-lucide="log-out" class="w-4 h-4"></i> Logout
         </a>
     </div>

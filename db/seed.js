@@ -1,226 +1,214 @@
 const bcrypt = require('bcryptjs');
-const { setCollection, readDb, writeDb } = require('./store');
+const { readDb, writeDb } = require('./store');
 
 const db = readDb();
 
-// ========== SETTINGS ==========
-db.settings = [
-  // General
-  { key: 'site_logo', value: '', type: 'image', category: 'general' },
-  { key: 'logo_size', value: '40', type: 'range', category: 'general' },
-  { key: 'copyright', value: '2025 RAKI Coffee Co. · Mukono, Namataba · Uganda', type: 'text', category: 'general' },
-  { key: 'site_tagline', value: 'Crafting experiences with soul, creativity & love', type: 'text', category: 'general' },
-  { key: 'site_description', value: "From Uganda's highlands to your cup.", type: 'textarea', category: 'general' },
-  { key: 'site_location', value: 'Mukono, Uganda', type: 'text', category: 'general' },
-  { key: 'site_phone', value: '+256 702 217 176', type: 'text', category: 'general' },
-  { key: 'site_email', value: 'ubirucent@gmail.com', type: 'text', category: 'general' },
-  { key: 'site_hours', value: 'Mon-Sat: 7am-6pm', type: 'text', category: 'general' },
-  { key: 'site_address', value: 'Sezibwa Road, Mukono, Uganda', type: 'text', category: 'general' },
-  // Design - Colors
-  { key: 'color_bg', value: '#FAF7F2', type: 'color', category: 'design' },
-  { key: 'color_surface', value: '#FFFFFF', type: 'color', category: 'design' },
-  { key: 'color_primary', value: '#4A3518', type: 'color', category: 'design' },
-  { key: 'color_text', value: '#4A3518', type: 'color', category: 'design' },
-  { key: 'color_text_muted', value: '#8B6E3C', type: 'color', category: 'design' },
-  { key: 'color_accent', value: '#F5F0E8', type: 'color', category: 'design' },
-  { key: 'color_border', value: '#4A3518', type: 'color', category: 'design' },
-  // Design - Typography
-  { key: 'font_heading', value: 'Inter', type: 'text', category: 'design' },
-  { key: 'font_body', value: 'Inter', type: 'text', category: 'design' },
-  { key: 'font_mono', value: 'ui-monospace, SFMono-Regular, Menlo, monospace', type: 'text', category: 'design' },
-  { key: 'heading_weight', value: '900', type: 'text', category: 'design' },
-  { key: 'heading_style', value: 'uppercase', type: 'text', category: 'design' },
-  { key: 'heading_tracking', value: 'tighter', type: 'text', category: 'design' },
-  // Design - Layout
-  { key: 'border_radius', value: '0.5rem', type: 'text', category: 'design' },
-  { key: 'border_width', value: '2px', type: 'text', category: 'design' },
-  { key: 'shadow_style', value: 'hard', type: 'text', category: 'design' },
-  { key: 'max_width', value: '1280px', type: 'text', category: 'design' },
-  // Hero
-  { key: 'hero_title_line1', value: 'RAKI', type: 'text', category: 'hero' },
-  { key: 'hero_title_line2', value: 'Coffee', type: 'text', category: 'hero' },
-  { key: 'hero_description', value: "Crafting experiences with soul, creativity & love — from Uganda's highlands to your cup.", type: 'textarea', category: 'hero' },
-  { key: 'hero_cta_primary', value: 'Explore', type: 'text', category: 'hero' },
-  { key: 'hero_cta_primary_link', value: '#products', type: 'text', category: 'hero' },
-  { key: 'hero_cta_secondary', value: 'Meraki Trail', type: 'text', category: 'hero' },
-  { key: 'hero_cta_secondary_link', value: '#meraki', type: 'text', category: 'hero' },
-  { key: 'hero_bg_image', value: '', type: 'text', category: 'hero' },
-  { key: 'hero_images', value: 'https://picsum.photos/seed/uganda-coffee-farm/800/500.jpg,https://picsum.photos/seed/coffee-cherries-red/800/500.jpg,https://picsum.photos/seed/sezibwa-waterfall-aerial/800/500.jpg,https://picsum.photos/seed/uganda-landscape-green/800/500.jpg', type: 'textarea', category: 'hero' },
-  { key: 'marquee_items', value: 'Coffee Experience,Eco Cycling,Nature Walks,Sezibwa & Coffee,Meraki Trail', type: 'textarea', category: 'hero' },
-  // Section labels
-  { key: 'section_products_label', value: '001 — Products & Experiences', type: 'text', category: 'sections' },
-  { key: 'section_products_title', value: 'More Than\nCoffee.', type: 'textarea', category: 'sections' },
-  { key: 'section_products_description', value: 'From bean to cup, trail to river — immersive experiences connecting you with the land, people, and craft.', type: 'textarea', category: 'sections' },
-  { key: 'section_trail_label', value: '002 — Signature Experience', type: 'text', category: 'sections' },
-  { key: 'section_trail_title', value: 'Meraki\nTrail', type: 'textarea', category: 'sections' },
-  { key: 'section_trail_description', value: '/me·ra·ki/ — doing something with soul, creativity, and love. Choose your path. Leave a piece of yourself on the trail.', type: 'textarea', category: 'sections' },
-  { key: 'section_story_label', value: '003 — Our Story', type: 'text', category: 'sections' },
-  { key: 'section_story_title', value: 'Rooted in\nthe Soil.', type: 'textarea', category: 'sections' },
-  { key: 'section_story_quote', value: 'RAKI Coffee was born from a simple belief: great coffee comes from great relationships — with the land, the farmers, and the community.', type: 'textarea', category: 'sections' },
-  { key: 'section_story_paragraph1', value: "Nestled near the Sezibwa River in Uganda, we started as a small collective of passionate coffee lovers and local farmers. Today, we've grown into a destination where visitors experience coffee in its purest form.", type: 'textarea', category: 'sections' },
-  { key: 'section_story_paragraph2', value: 'Our name carries the spirit of Meraki — doing things with soul, creativity, and love. Every trail we carve, every bean we roast, every community program we run is infused with this philosophy.', type: 'textarea', category: 'sections' },
-  { key: 'section_story_image', value: 'https://picsum.photos/seed/uganda-farmer-portrait/700/550.jpg', type: 'text', category: 'sections' },
-  { key: 'section_story_est', value: 'Est. 2018', type: 'text', category: 'sections' },
-  { key: 'section_events_label', value: '004 — Events', type: 'text', category: 'sections' },
-  { key: 'section_events_title', value: 'Gather.\nCelebrate.', type: 'textarea', category: 'sections' },
-  { key: 'section_events_description', value: 'From harvest festivals to cupping workshops — events around the shared love of coffee and community.', type: 'textarea', category: 'sections' },
-  { key: 'section_partner_label', value: '005 — Collaborate', type: 'text', category: 'sections' },
-  { key: 'section_partner_title', value: 'Ways to\nPartner', type: 'textarea', category: 'sections' },
-  { key: 'section_community_label', value: '006 — Community Impact', type: 'text', category: 'sections' },
-  { key: 'section_community_title', value: 'Brewing\nChange.', type: 'textarea', category: 'sections' },
-  { key: 'section_subscribe_label', value: '007 — Subscribe', type: 'text', category: 'sections' },
-  { key: 'section_subscribe_title', value: 'Fresh RAKI,\nMonthly.', type: 'textarea', category: 'sections' },
-  { key: 'section_subscribe_description', value: "Choose your frequency, grind, and blend. We handle the rest. Never run out of Uganda's finest.", type: 'textarea', category: 'sections' },
-  { key: 'section_buy_label', value: '008 — Shop', type: 'text', category: 'sections' },
-  { key: 'section_buy_title', value: 'Take Uganda\nHome.', type: 'textarea', category: 'sections' },
-  { key: 'section_buy_description', value: 'Single-origin, sustainably grown, expertly roasted. Every purchase supports our farmers.', type: 'textarea', category: 'sections' },
-  { key: 'section_location_label', value: '009 — Location', type: 'text', category: 'sections' },
-  { key: 'section_location_title', value: 'Find Us.', type: 'textarea', category: 'sections' },
-  { key: 'section_location_description', value: "Near the iconic Sezibwa Falls, Mukono District — the heart of Uganda's coffee country.", type: 'textarea', category: 'sections' },
-  { key: 'section_outgrowers_label', value: '010 — Outgrowers', type: 'text', category: 'sections' },
-  { key: 'section_outgrowers_title', value: 'Our Network.', type: 'textarea', category: 'sections' },
-  { key: 'section_outgrowers_description', value: "500+ outgrower farmers across Uganda's prime coffee regions.", type: 'textarea', category: 'sections' },
-  { key: 'section_cta_title', value: 'Ready for Meraki?', type: 'textarea', category: 'sections' },
-  { key: 'section_cta_subtitle', value: 'Visit. Hike. Brew. Subscribe.', type: 'text', category: 'sections' },
-  { key: 'section_gallery_label', value: '011 — Gallery', type: 'text', category: 'sections' },
-  { key: 'section_gallery_title', value: 'Life at\nRAKI.', type: 'textarea', category: 'sections' },
-  { key: 'section_gallery_description', value: 'Moments from the farm, the trail, the cup — a glimpse into the RAKI experience.', type: 'textarea', category: 'sections' },
-  // Section visibility toggles
-  { key: 'show_hero', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_products', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_trails', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_story', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_events', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_partner', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_community', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_subscribe', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_shop', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_location', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_gallery', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'show_cta', value: '1', type: 'toggle', category: 'visibility' },
-  { key: 'cta_primary_text', value: 'Subscribe', type: 'text', category: 'sections' },
-  { key: 'cta_primary_link', value: '#subscribe', type: 'text', category: 'sections' },
-  { key: 'cta_secondary_text', value: 'Shop', type: 'text', category: 'sections' },
-  { key: 'cta_secondary_link', value: '#buy', type: 'text', category: 'sections' },
-  { key: 'sub_form_title', value: 'Start Subscription', type: 'text', category: 'subscribe' },
-  { key: 'sub_form_description', value: 'Fill in your details. First box ships within 5 days.', type: 'text', category: 'subscribe' },
-  // Social
-  { key: 'social_instagram', value: '#', type: 'text', category: 'social' },
-  { key: 'social_twitter', value: '#', type: 'text', category: 'social' },
-  { key: 'social_facebook', value: '#', type: 'text', category: 'social' },
-  { key: 'social_youtube', value: '#', type: 'text', category: 'social' },
-  // Admin
-  { key: 'admin_password_hash', value: bcrypt.hashSync('raki2025', 10), type: 'text', category: 'admin' },
-];
+const DEFAULTS = {
+  settings: [
+    { key: 'site_logo', value: '', type: 'image', category: 'general' },
+    { key: 'logo_size', value: '40', type: 'range', category: 'general' },
+    { key: 'copyright', value: '2025 RAKI Coffee Co. · Mukono, Namataba · Uganda', type: 'text', category: 'general' },
+    { key: 'site_tagline', value: 'Crafting experiences with soul, creativity & love', type: 'text', category: 'general' },
+    { key: 'site_description', value: "From Uganda's highlands to your cup.", type: 'textarea', category: 'general' },
+    { key: 'site_location', value: 'Mukono, Uganda', type: 'text', category: 'general' },
+    { key: 'site_phone', value: '+256 702 217 176', type: 'text', category: 'general' },
+    { key: 'site_email', value: 'ubirucent@gmail.com', type: 'text', category: 'general' },
+    { key: 'site_hours', value: 'Mon-Sat: 7am-6pm', type: 'text', category: 'general' },
+    { key: 'site_address', value: 'Sezibwa Road, Mukono, Uganda', type: 'text', category: 'general' },
+    { key: 'color_bg', value: '#FAF7F2', type: 'color', category: 'design' },
+    { key: 'color_surface', value: '#FFFFFF', type: 'color', category: 'design' },
+    { key: 'color_primary', value: '#4A3518', type: 'color', category: 'design' },
+    { key: 'color_text', value: '#4A3518', type: 'color', category: 'design' },
+    { key: 'color_text_muted', value: '#8B6E3C', type: 'color', category: 'design' },
+    { key: 'color_accent', value: '#F5F0E8', type: 'color', category: 'design' },
+    { key: 'color_border', value: '#4A3518', type: 'color', category: 'design' },
+    { key: 'font_heading', value: 'Inter', type: 'text', category: 'design' },
+    { key: 'font_body', value: 'Inter', type: 'text', category: 'design' },
+    { key: 'font_mono', value: 'ui-monospace, SFMono-Regular, Menlo, monospace', type: 'text', category: 'design' },
+    { key: 'heading_weight', value: '900', type: 'text', category: 'design' },
+    { key: 'heading_style', value: 'uppercase', type: 'text', category: 'design' },
+    { key: 'heading_tracking', value: 'tighter', type: 'text', category: 'design' },
+    { key: 'border_radius', value: '0.5rem', type: 'text', category: 'design' },
+    { key: 'border_width', value: '2px', type: 'text', category: 'design' },
+    { key: 'shadow_style', value: 'hard', type: 'text', category: 'design' },
+    { key: 'max_width', value: '1280px', type: 'text', category: 'design' },
+    { key: 'hero_title_line1', value: 'RAKI', type: 'text', category: 'hero' },
+    { key: 'hero_title_line2', value: 'Coffee', type: 'text', category: 'hero' },
+    { key: 'hero_description', value: "Crafting experiences with soul, creativity & love — from Uganda's highlands to your cup.", type: 'textarea', category: 'hero' },
+    { key: 'hero_cta_primary', value: 'Explore', type: 'text', category: 'hero' },
+    { key: 'hero_cta_primary_link', value: '#products', type: 'text', category: 'hero' },
+    { key: 'hero_cta_secondary', value: 'Meraki Trail', type: 'text', category: 'hero' },
+    { key: 'hero_cta_secondary_link', value: '#meraki', type: 'text', category: 'hero' },
+    { key: 'hero_bg_image', value: '', type: 'text', category: 'hero' },
+    { key: 'hero_images', value: 'https://picsum.photos/seed/uganda-coffee-farm/800/500.jpg,https://picsum.photos/seed/coffee-cherries-red/800/500.jpg,https://picsum.photos/seed/sezibwa-waterfall-aerial/800/500.jpg,https://picsum.photos/seed/uganda-landscape-green/800/500.jpg', type: 'textarea', category: 'hero' },
+    { key: 'marquee_items', value: 'Coffee Experience,Eco Cycling,Nature Walks,Sezibwa & Coffee,Meraki Trail', type: 'textarea', category: 'hero' },
+    { key: 'section_products_label', value: '001 — Products & Experiences', type: 'text', category: 'sections' },
+    { key: 'section_products_title', value: 'More Than\nCoffee.', type: 'textarea', category: 'sections' },
+    { key: 'section_products_description', value: 'From bean to cup, trail to river — immersive experiences connecting you with the land, people, and craft.', type: 'textarea', category: 'sections' },
+    { key: 'section_trail_label', value: '002 — Signature Experience', type: 'text', category: 'sections' },
+    { key: 'section_trail_title', value: 'Meraki\nTrail', type: 'textarea', category: 'sections' },
+    { key: 'section_trail_description', value: '/me·ra·ki/ — doing something with soul, creativity, and love. Choose your path. Leave a piece of yourself on the trail.', type: 'textarea', category: 'sections' },
+    { key: 'section_story_label', value: '003 — Our Story', type: 'text', category: 'sections' },
+    { key: 'section_story_title', value: 'Rooted in\nthe Soil.', type: 'textarea', category: 'sections' },
+    { key: 'section_story_quote', value: 'RAKI Coffee was born from a simple belief: great coffee comes from great relationships — with the land, the farmers, and the community.', type: 'textarea', category: 'sections' },
+    { key: 'section_story_paragraph1', value: "Nestled near the Sezibwa River in Uganda, we started as a small collective of passionate coffee lovers and local farmers. Today, we've grown into a destination where visitors experience coffee in its purest form.", type: 'textarea', category: 'sections' },
+    { key: 'section_story_paragraph2', value: 'Our name carries the spirit of Meraki — doing things with soul, creativity, and love. Every trail we carve, every bean we roast, every community program we run is infused with this philosophy.', type: 'textarea', category: 'sections' },
+    { key: 'section_story_image', value: 'https://picsum.photos/seed/uganda-farmer-portrait/700/550.jpg', type: 'text', category: 'sections' },
+    { key: 'section_story_est', value: 'Est. 2018', type: 'text', category: 'sections' },
+    { key: 'section_events_label', value: '004 — Events', type: 'text', category: 'sections' },
+    { key: 'section_events_title', value: 'Gather.\nCelebrate.', type: 'textarea', category: 'sections' },
+    { key: 'section_events_description', value: 'From harvest festivals to cupping workshops — events around the shared love of coffee and community.', type: 'textarea', category: 'sections' },
+    { key: 'section_partner_label', value: '005 — Collaborate', type: 'text', category: 'sections' },
+    { key: 'section_partner_title', value: 'Ways to\nPartner', type: 'textarea', category: 'sections' },
+    { key: 'section_community_label', value: '006 — Community Impact', type: 'text', category: 'sections' },
+    { key: 'section_community_title', value: 'Brewing\nChange.', type: 'textarea', category: 'sections' },
+    { key: 'section_subscribe_label', value: '007 — Subscribe', type: 'text', category: 'sections' },
+    { key: 'section_subscribe_title', value: 'Fresh RAKI,\nMonthly.', type: 'textarea', category: 'sections' },
+    { key: 'section_subscribe_description', value: "Choose your frequency, grind, and blend. We handle the rest. Never run out of Uganda's finest.", type: 'textarea', category: 'sections' },
+    { key: 'section_buy_label', value: '008 — Shop', type: 'text', category: 'sections' },
+    { key: 'section_buy_title', value: 'Take Uganda\nHome.', type: 'textarea', category: 'sections' },
+    { key: 'section_buy_description', value: 'Single-origin, sustainably grown, expertly roasted. Every purchase supports our farmers.', type: 'textarea', category: 'sections' },
+    { key: 'section_location_label', value: '009 — Location', type: 'text', category: 'sections' },
+    { key: 'section_location_title', value: 'Find Us.', type: 'textarea', category: 'sections' },
+    { key: 'section_location_description', value: "Near the iconic Sezibwa Falls, Mukono District — the heart of Uganda's coffee country.", type: 'textarea', category: 'sections' },
+    { key: 'section_outgrowers_label', value: '010 — Outgrowers', type: 'text', category: 'sections' },
+    { key: 'section_outgrowers_title', value: 'Our Network.', type: 'textarea', category: 'sections' },
+    { key: 'section_outgrowers_description', value: "500+ outgrower farmers across Uganda's prime coffee regions.", type: 'textarea', category: 'sections' },
+    { key: 'section_cta_title', value: 'Ready for Meraki?', type: 'textarea', category: 'sections' },
+    { key: 'section_cta_subtitle', value: 'Visit. Hike. Brew. Subscribe.', type: 'text', category: 'sections' },
+    { key: 'section_gallery_label', value: '011 — Gallery', type: 'text', category: 'sections' },
+    { key: 'section_gallery_title', value: 'Life at\nRAKI.', type: 'textarea', category: 'sections' },
+    { key: 'section_gallery_description', value: 'Moments from the farm, the trail, the cup — a glimpse into the RAKI experience.', type: 'textarea', category: 'sections' },
+    { key: 'show_hero', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_products', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_trails', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_story', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_events', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_partner', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_community', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_subscribe', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_shop', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_location', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_gallery', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'show_cta', value: '1', type: 'toggle', category: 'visibility' },
+    { key: 'cta_primary_text', value: 'Subscribe', type: 'text', category: 'sections' },
+    { key: 'cta_primary_link', value: '#subscribe', type: 'text', category: 'sections' },
+    { key: 'cta_secondary_text', value: 'Shop', type: 'text', category: 'sections' },
+    { key: 'cta_secondary_link', value: '#buy', type: 'text', category: 'sections' },
+    { key: 'sub_form_title', value: 'Start Subscription', type: 'text', category: 'subscribe' },
+    { key: 'sub_form_description', value: 'Fill in your details. First box ships within 5 days.', type: 'text', category: 'subscribe' },
+    { key: 'social_instagram', value: '#', type: 'text', category: 'social' },
+    { key: 'social_twitter', value: '#', type: 'text', category: 'social' },
+    { key: 'social_facebook', value: '#', type: 'text', category: 'social' },
+    { key: 'social_youtube', value: '#', type: 'text', category: 'social' },
+    { key: 'admin_password_hash', value: bcrypt.hashSync('raki2025', 10), type: 'text', category: 'admin' },
+  ],
+  navigation: [
+    { id: 1, label: 'Products', href: '#products', sort_order: 1, is_active: 1, is_cta: 0 },
+    { id: 2, label: 'Meraki Trail', href: '#meraki', sort_order: 2, is_active: 1, is_cta: 0 },
+    { id: 3, label: 'Story', href: '#story', sort_order: 3, is_active: 1, is_cta: 0 },
+    { id: 4, label: 'Events', href: '#events', sort_order: 4, is_active: 1, is_cta: 0 },
+    { id: 5, label: 'Impact', href: '#community', sort_order: 5, is_active: 1, is_cta: 0 },
+    { id: 6, label: 'Location', href: '#location', sort_order: 6, is_active: 1, is_cta: 0 },
+    { id: 7, label: 'Subscribe', href: '#subscribe', sort_order: 7, is_active: 1, is_cta: 1 },
+  ],
+  products: [
+    { id: 1, name: 'Coffee Experience', slug: 'coffee-experience', description: 'Pick cherries, roast beans, brew your cup — the full journey from branch to palate.', badge: 'Experience', category: 'experience', image_url: 'https://picsum.photos/seed/coffee-picking-uganda/600/350.jpg', price: null, is_active: 1, sort_order: 1 },
+    { id: 2, name: 'Eco Cycling', slug: 'eco-cycling', description: 'Pedal through coffee terraces and rolling hills. Feel the land, breathe the air.', badge: 'Adventure', category: 'experience', image_url: 'https://picsum.photos/seed/cycling-green-hills/600/350.jpg', price: null, is_active: 1, sort_order: 2 },
+    { id: 3, name: 'Nature Guided Walks', slug: 'nature-walks', description: 'Expert-led trails through native flora, fauna, and the ecosystems behind great coffee.', badge: 'Nature', category: 'experience', image_url: 'https://picsum.photos/seed/forest-walk-africa/600/350.jpg', price: null, is_active: 1, sort_order: 3 },
+    { id: 4, name: 'Sezibwa & Coffee', slug: 'sezibwa-coffee', description: 'Spiritual falls paired with curated coffee tasting. Heritage meets the art of brewing.', badge: 'Heritage', category: 'experience', image_url: 'https://picsum.photos/seed/sezibwa-waterfall/600/350.jpg', price: null, is_active: 1, sort_order: 4 },
+    { id: 5, name: 'Coffee Products', slug: 'coffee-products', description: 'Single-origin beans, ground coffee, signature blends — take RAKI home with you.', badge: 'Shop', category: 'experience', image_url: 'https://picsum.photos/seed/coffee-beans-roasted/600/350.jpg', price: null, is_active: 1, sort_order: 5 },
+    { id: 6, name: 'Meraki Trail', slug: 'meraki-trail', description: '3-level hiking experience. Soul, creativity & love — the Meraki way.', badge: 'Featured', category: 'experience', image_url: 'https://picsum.photos/seed/hiking-trail-mountain/600/350.jpg', price: null, is_active: 1, sort_order: 6 },
+    { id: 7, name: 'RAKI Signature', slug: 'raki-signature', description: 'Medium roast · Dark chocolate, citrus, honey · 250g', badge: 'Single Origin', category: 'coffee', image_url: 'https://picsum.photos/seed/coffee-bag-brown/400/300.jpg', price: 18, is_active: 1, sort_order: 1 },
+    { id: 8, name: 'Sezibwa River Roast', slug: 'sezibwa-river-roast', description: 'Dark roast · Bold body, stone fruit · 500g', badge: 'Organic', category: 'coffee', image_url: 'https://picsum.photos/seed/coffee-dark-roast/400/300.jpg', price: 28, is_active: 1, sort_order: 2 },
+    { id: 9, name: 'Meraki Micro-Lot', slug: 'meraki-micro-lot', description: 'Light roast · Floral, berry, wine · 250g', badge: 'Limited Edition', category: 'coffee', image_url: 'https://picsum.photos/seed/coffee-special-lot/400/300.jpg', price: 35, is_active: 1, sort_order: 3 },
+  ],
+  subscriptions: [
+    { id: 1, name: 'Starter', slug: 'starter', description: 'Single origin', weight: '250g', price: 25, features: ['Single origin selection', 'Whole bean or ground', 'Brewing guide included'], is_popular: 0, is_active: 1, sort_order: 1 },
+    { id: 2, name: 'Family', slug: 'family', description: 'Your choice of blend', weight: '500g', price: 45, features: ['Choose your blend', 'Whole bean or ground', 'Exclusive recipes', 'Free shipping'], is_popular: 1, is_active: 1, sort_order: 2 },
+    { id: 3, name: 'Connoisseur', slug: 'connoisseur', description: 'Exclusive micro-lot', weight: '1kg', price: 75, features: ['Rare micro-lot beans', 'Whole bean only', 'Direct farmer story', 'Free shipping', 'Roasting notes card'], is_popular: 0, is_active: 1, sort_order: 3 },
+  ],
+  events: [
+    { id: 1, title: 'Harvest Season Opening', description: 'First pick of the season. Live music, cherry picking, fresh brews.', event_date: '2025-03-15', event_month: 'MAR', event_day: '15', is_active: 1, sort_order: 1 },
+    { id: 2, title: 'Earth Day Eco Ride', description: 'Special eco cycling event. Tree planting and coffee tasting included.', event_date: '2025-04-22', event_month: 'APR', event_day: '22', is_active: 1, sort_order: 2 },
+    { id: 3, title: 'Cupping Masterclass', description: 'Professional cupping techniques and brewing methods from our roasters.', event_date: '2025-06-08', event_month: 'JUN', event_day: '08', is_active: 1, sort_order: 3 },
+    { id: 4, title: 'Meraki Trail Challenge', description: 'Annual advanced trail event. Push your limits. Earn the Meraki badge.', event_date: '2025-08-17', event_month: 'AUG', event_day: '17', is_active: 1, sort_order: 4 },
+  ],
+  trails: [
+    { id: 1, level: 1, name: 'Beginner', description: 'Gentle walk through lower coffee terraces. Scenic views, coffee tasting, and a warm cup at the finish.', duration: '2-3 Hrs', difficulty: 'Easy', features: ['Scenic coffee farm views', 'Guided coffee tasting', 'Complementary RAKI cup'], is_popular: 0, is_active: 1 },
+    { id: 2, level: 2, name: 'Intermediate', description: 'Deeper journey through forest paths and mid-altitude ridges. Farm-to-cup workshop, local lunch, waterfall stop.', duration: '4-5 Hrs', difficulty: 'Moderate', features: ['Forest & ridge hike', 'Farm-to-cup workshop', 'Local lunch included', 'Waterfall visit'], is_popular: 1, is_active: 1 },
+    { id: 3, level: 3, name: 'Advanced', description: 'The ultimate Meraki. High-altitude trails, outgrower farm visits, sunset roasting ceremony over the valley.', duration: 'Full Day', difficulty: 'Challenging', features: ['High-altitude trail', 'Outgrower farm visits', 'Sunset roasting ceremony', 'All meals & gear included'], is_popular: 0, is_active: 1 },
+  ],
+  partners: [
+    { id: 1, name: 'Retail', description: 'Stock RAKI in your store or café. Competitive margins + marketing support.', icon: 'store', is_active: 1, sort_order: 1 },
+    { id: 2, name: 'Distribution', description: 'Regional and international distribution. Bring Ugandan coffee to the world.', icon: 'globe', is_active: 1, sort_order: 2 },
+    { id: 3, name: 'CSR & NGO', description: 'Partner on community development, women & youth empowerment through coffee.', icon: 'handshake', is_active: 1, sort_order: 3 },
+    { id: 4, name: 'Events & Tourism', description: 'Co-host events, curate coffee tourism, bring groups for Meraki Trail.', icon: 'calendar-heart', is_active: 1, sort_order: 4 },
+  ],
+  community_programs: [
+    { id: 1, title: 'Women Coffee Program', description: 'Training, resources, and fair-trade access. 200+ women building independent livelihoods through coffee.', icon: 'heart-handshake', image_url: 'https://picsum.photos/seed/women-farming-africa/500/350.jpg', is_active: 1, sort_order: 1 },
+    { id: 2, title: 'Youths Development', description: 'Skills in coffee farming, entrepreneurship, eco-tourism. Building the next generation of coffee leaders.', icon: 'graduation-cap', image_url: 'https://picsum.photos/seed/youth-learning-uganda/500/350.jpg', is_active: 1, sort_order: 2 },
+    { id: 3, title: 'Farmer Development', description: 'Sustainable agriculture, quality processing, business management. Grow better, earn more.', icon: 'sprout', image_url: 'https://picsum.photos/seed/farmer-training-coffee/500/350.jpg', is_active: 1, sort_order: 3 },
+  ],
+  outgrowers: [
+    { id: 1, name: 'Mukono District', region: 'Central Region', description: '200+ partners', icon: 'mountain', sort_order: 1 },
+    { id: 2, name: 'Kapchorwa, Mt. Elgon', region: 'Eastern', description: 'High-altitude Arabica, 120+ farmers', icon: 'trees', sort_order: 2 },
+    { id: 3, name: 'Bushenyi District', region: 'Western', description: 'Robusta specialists, 100+ farmers', icon: 'landmark', sort_order: 3 },
+    { id: 4, name: 'Jinja / Sezibwa Basin', region: 'Lake Victoria', description: '80+ farmers, river terraces', icon: 'droplets', sort_order: 4 },
+    { id: 5, name: 'Zirobwe, Luweero', region: 'Central North', description: '50+ new outgrowers', icon: 'sun', sort_order: 5 },
+  ],
+  stats: [
+    { id: 1, label: 'Outgrower Farmers', value: '500+', sort_order: 1 },
+    { id: 2, label: 'Women Empowered', value: '200+', sort_order: 2 },
+    { id: 3, label: 'Youths Trained', value: '150+', sort_order: 3 },
+    { id: 4, label: 'Communities', value: '5', sort_order: 4 },
+    { id: 5, label: 'Trail Levels', value: '3', sort_order: 5 },
+    { id: 6, label: 'Ugandan Grown', value: '100%', sort_order: 6 },
+    { id: 7, label: 'Districts', value: '5', sort_order: 7 },
+  ],
+  gallery: [
+    { id: 1, title: 'Coffee Harvest', description: 'Freshly picked cherries from the terraces', image_url: 'https://picsum.photos/seed/coffee-harvest-uganda/800/600.jpg', category: 'farm', is_active: 1, sort_order: 1 },
+    { id: 2, title: 'Sezibwa Falls', description: 'The iconic waterfall near our farm', image_url: 'https://picsum.photos/seed/sezibwa-falls-close/800/600.jpg', category: 'nature', is_active: 1, sort_order: 2 },
+    { id: 3, title: 'Roasting Process', description: 'Artisan roasting at the RAKI workshop', image_url: 'https://picsum.photos/seed/coffee-roasting-process/800/600.jpg', category: 'process', is_active: 1, sort_order: 3 },
+    { id: 4, title: 'Meraki Trail', description: 'Hikers enjoying the intermediate trail', image_url: 'https://picsum.photos/seed/meraki-trail-hikers/800/600.jpg', category: 'trail', is_active: 1, sort_order: 4 },
+    { id: 5, title: 'Community Program', description: 'Women empowerment through coffee training', image_url: 'https://picsum.photos/seed/women-coffee-training/800/600.jpg', category: 'community', is_active: 1, sort_order: 5 },
+    { id: 6, title: 'The Perfect Cup', description: 'A freshly brewed cup of RAKI Signature', image_url: 'https://picsum.photos/seed/perfect-cup-coffee/800/600.jpg', category: 'product', is_active: 1, sort_order: 6 },
+  ],
+  footer_links: [
+    { id: 1, category: 'Experiences', label: 'Coffee Experience', href: '#products', sort_order: 1 },
+    { id: 2, category: 'Experiences', label: 'Eco Cycling', href: '#products', sort_order: 2 },
+    { id: 3, category: 'Experiences', label: 'Nature Walks', href: '#products', sort_order: 3 },
+    { id: 4, category: 'Experiences', label: 'Sezibwa & Coffee', href: '#products', sort_order: 4 },
+    { id: 5, category: 'Experiences', label: 'Meraki Trail', href: '#meraki', sort_order: 5 },
+    { id: 6, category: 'Company', label: 'Story', href: '#story', sort_order: 1 },
+    { id: 7, category: 'Company', label: 'Events', href: '#events', sort_order: 2 },
+    { id: 8, category: 'Company', label: 'Impact', href: '#community', sort_order: 3 },
+    { id: 9, category: 'Company', label: 'Partner', href: '#partner', sort_order: 4 },
+    { id: 10, category: 'Company', label: 'Location', href: '#location', sort_order: 5 },
+    { id: 11, category: 'Shop', label: 'Coffee Products', href: '#buy', sort_order: 1 },
+    { id: 12, category: 'Shop', label: 'Subscription', href: '#subscribe', sort_order: 2 },
+    { id: 13, category: 'Shop', label: 'Wholesale', href: '#', sort_order: 3 },
+  ],
+};
 
-// ========== NAVIGATION ==========
-db.navigation = [
-  { id: 1, label: 'Products', href: '#products', sort_order: 1, is_active: 1, is_cta: 0 },
-  { id: 2, label: 'Meraki Trail', href: '#meraki', sort_order: 2, is_active: 1, is_cta: 0 },
-  { id: 3, label: 'Story', href: '#story', sort_order: 3, is_active: 1, is_cta: 0 },
-  { id: 4, label: 'Events', href: '#events', sort_order: 4, is_active: 1, is_cta: 0 },
-  { id: 5, label: 'Impact', href: '#community', sort_order: 5, is_active: 1, is_cta: 0 },
-  { id: 6, label: 'Location', href: '#location', sort_order: 6, is_active: 1, is_cta: 0 },
-  { id: 7, label: 'Subscribe', href: '#subscribe', sort_order: 7, is_active: 1, is_cta: 1 },
-];
-
-// ========== PRODUCTS ==========
-db.products = [
-  { id: 1, name: 'Coffee Experience', slug: 'coffee-experience', description: 'Pick cherries, roast beans, brew your cup — the full journey from branch to palate.', badge: 'Experience', category: 'experience', image_url: 'https://picsum.photos/seed/coffee-picking-uganda/600/350.jpg', price: null, is_active: 1, sort_order: 1 },
-  { id: 2, name: 'Eco Cycling', slug: 'eco-cycling', description: 'Pedal through coffee terraces and rolling hills. Feel the land, breathe the air.', badge: 'Adventure', category: 'experience', image_url: 'https://picsum.photos/seed/cycling-green-hills/600/350.jpg', price: null, is_active: 1, sort_order: 2 },
-  { id: 3, name: 'Nature Guided Walks', slug: 'nature-walks', description: 'Expert-led trails through native flora, fauna, and the ecosystems behind great coffee.', badge: 'Nature', category: 'experience', image_url: 'https://picsum.photos/seed/forest-walk-africa/600/350.jpg', price: null, is_active: 1, sort_order: 3 },
-  { id: 4, name: 'Sezibwa & Coffee', slug: 'sezibwa-coffee', description: 'Spiritual falls paired with curated coffee tasting. Heritage meets the art of brewing.', badge: 'Heritage', category: 'experience', image_url: 'https://picsum.photos/seed/sezibwa-waterfall/600/350.jpg', price: null, is_active: 1, sort_order: 4 },
-  { id: 5, name: 'Coffee Products', slug: 'coffee-products', description: 'Single-origin beans, ground coffee, signature blends — take RAKI home with you.', badge: 'Shop', category: 'experience', image_url: 'https://picsum.photos/seed/coffee-beans-roasted/600/350.jpg', price: null, is_active: 1, sort_order: 5 },
-  { id: 6, name: 'Meraki Trail', slug: 'meraki-trail', description: '3-level hiking experience. Soul, creativity & love — the Meraki way.', badge: 'Featured', category: 'experience', image_url: 'https://picsum.photos/seed/hiking-trail-mountain/600/350.jpg', price: null, is_active: 1, sort_order: 6 },
-  // Shop products
-  { id: 7, name: 'RAKI Signature', slug: 'raki-signature', description: 'Medium roast · Dark chocolate, citrus, honey · 250g', badge: 'Single Origin', category: 'coffee', image_url: 'https://picsum.photos/seed/coffee-bag-brown/400/300.jpg', price: 18, is_active: 1, sort_order: 1 },
-  { id: 8, name: 'Sezibwa River Roast', slug: 'sezibwa-river-roast', description: 'Dark roast · Bold body, stone fruit · 500g', badge: 'Organic', category: 'coffee', image_url: 'https://picsum.photos/seed/coffee-dark-roast/400/300.jpg', price: 28, is_active: 1, sort_order: 2 },
-  { id: 9, name: 'Meraki Micro-Lot', slug: 'meraki-micro-lot', description: 'Light roast · Floral, berry, wine · 250g', badge: 'Limited Edition', category: 'coffee', image_url: 'https://picsum.photos/seed/coffee-special-lot/400/300.jpg', price: 35, is_active: 1, sort_order: 3 },
-];
-
-// ========== SUBSCRIPTIONS ==========
-db.subscriptions = [
-  { id: 1, name: 'Starter', slug: 'starter', description: 'Single origin', weight: '250g', price: 25, features: ['Single origin selection', 'Whole bean or ground', 'Brewing guide included'], is_popular: 0, is_active: 1, sort_order: 1 },
-  { id: 2, name: 'Family', slug: 'family', description: 'Your choice of blend', weight: '500g', price: 45, features: ['Choose your blend', 'Whole bean or ground', 'Exclusive recipes', 'Free shipping'], is_popular: 1, is_active: 1, sort_order: 2 },
-  { id: 3, name: 'Connoisseur', slug: 'connoisseur', description: 'Exclusive micro-lot', weight: '1kg', price: 75, features: ['Rare micro-lot beans', 'Whole bean only', 'Direct farmer story', 'Free shipping', 'Roasting notes card'], is_popular: 0, is_active: 1, sort_order: 3 },
-];
-
-// ========== EVENTS ==========
-db.events = [
-  { id: 1, title: 'Harvest Season Opening', description: 'First pick of the season. Live music, cherry picking, fresh brews.', event_date: '2025-03-15', event_month: 'MAR', event_day: '15', is_active: 1, sort_order: 1 },
-  { id: 2, title: 'Earth Day Eco Ride', description: 'Special eco cycling event. Tree planting and coffee tasting included.', event_date: '2025-04-22', event_month: 'APR', event_day: '22', is_active: 1, sort_order: 2 },
-  { id: 3, title: 'Cupping Masterclass', description: 'Professional cupping techniques and brewing methods from our roasters.', event_date: '2025-06-08', event_month: 'JUN', event_day: '08', is_active: 1, sort_order: 3 },
-  { id: 4, title: 'Meraki Trail Challenge', description: 'Annual advanced trail event. Push your limits. Earn the Meraki badge.', event_date: '2025-08-17', event_month: 'AUG', event_day: '17', is_active: 1, sort_order: 4 },
-];
-
-// ========== TRAILS ==========
-db.trails = [
-  { id: 1, level: 1, name: 'Beginner', description: 'Gentle walk through lower coffee terraces. Scenic views, coffee tasting, and a warm cup at the finish.', duration: '2-3 Hrs', difficulty: 'Easy', features: ['Scenic coffee farm views', 'Guided coffee tasting', 'Complementary RAKI cup'], is_popular: 0, is_active: 1 },
-  { id: 2, level: 2, name: 'Intermediate', description: 'Deeper journey through forest paths and mid-altitude ridges. Farm-to-cup workshop, local lunch, waterfall stop.', duration: '4-5 Hrs', difficulty: 'Moderate', features: ['Forest & ridge hike', 'Farm-to-cup workshop', 'Local lunch included', 'Waterfall visit'], is_popular: 1, is_active: 1 },
-  { id: 3, level: 3, name: 'Advanced', description: 'The ultimate Meraki. High-altitude trails, outgrower farm visits, sunset roasting ceremony over the valley.', duration: 'Full Day', difficulty: 'Challenging', features: ['High-altitude trail', 'Outgrower farm visits', 'Sunset roasting ceremony', 'All meals & gear included'], is_popular: 0, is_active: 1 },
-];
-
-// ========== PARTNERS ==========
-db.partners = [
-  { id: 1, name: 'Retail', description: 'Stock RAKI in your store or café. Competitive margins + marketing support.', icon: 'store', is_active: 1, sort_order: 1 },
-  { id: 2, name: 'Distribution', description: 'Regional and international distribution. Bring Ugandan coffee to the world.', icon: 'globe', is_active: 1, sort_order: 2 },
-  { id: 3, name: 'CSR & NGO', description: 'Partner on community development, women & youth empowerment through coffee.', icon: 'handshake', is_active: 1, sort_order: 3 },
-  { id: 4, name: 'Events & Tourism', description: 'Co-host events, curate coffee tourism, bring groups for Meraki Trail.', icon: 'calendar-heart', is_active: 1, sort_order: 4 },
-];
-
-// ========== COMMUNITY PROGRAMS ==========
-db.community_programs = [
-  { id: 1, title: 'Women Coffee Program', description: 'Training, resources, and fair-trade access. 200+ women building independent livelihoods through coffee.', icon: 'heart-handshake', image_url: 'https://picsum.photos/seed/women-farming-africa/500/350.jpg', is_active: 1, sort_order: 1 },
-  { id: 2, title: 'Youths Development', description: 'Skills in coffee farming, entrepreneurship, eco-tourism. Building the next generation of coffee leaders.', icon: 'graduation-cap', image_url: 'https://picsum.photos/seed/youth-learning-uganda/500/350.jpg', is_active: 1, sort_order: 2 },
-  { id: 3, title: 'Farmer Development', description: 'Sustainable agriculture, quality processing, business management. Grow better, earn more.', icon: 'sprout', image_url: 'https://picsum.photos/seed/farmer-training-coffee/500/350.jpg', is_active: 1, sort_order: 3 },
-];
-
-// ========== OUTGROWERS ==========
-db.outgrowers = [
-  { id: 1, name: 'Mukono District', region: 'Central Region', description: '200+ partners', icon: 'mountain', sort_order: 1 },
-  { id: 2, name: 'Kapchorwa, Mt. Elgon', region: 'Eastern', description: 'High-altitude Arabica, 120+ farmers', icon: 'trees', sort_order: 2 },
-  { id: 3, name: 'Bushenyi District', region: 'Western', description: 'Robusta specialists, 100+ farmers', icon: 'landmark', sort_order: 3 },
-  { id: 4, name: 'Jinja / Sezibwa Basin', region: 'Lake Victoria', description: '80+ farmers, river terraces', icon: 'droplets', sort_order: 4 },
-  { id: 5, name: 'Zirobwe, Luweero', region: 'Central North', description: '50+ new outgrowers', icon: 'sun', sort_order: 5 },
-];
-
-// ========== STATS ==========
-db.stats = [
-  { id: 1, label: 'Outgrower Farmers', value: '500+', sort_order: 1 },
-  { id: 2, label: 'Women Empowered', value: '200+', sort_order: 2 },
-  { id: 3, label: 'Youths Trained', value: '150+', sort_order: 3 },
-  { id: 4, label: 'Communities', value: '5', sort_order: 4 },
-  { id: 5, label: 'Trail Levels', value: '3', sort_order: 5 },
-  { id: 6, label: 'Ugandan Grown', value: '100%', sort_order: 6 },
-  { id: 7, label: 'Districts', value: '5', sort_order: 7 },
-];
-
-// ========== GALLERY ==========
-db.gallery = [
-  { id: 1, title: 'Coffee Harvest', description: 'Freshly picked cherries from the terraces', image_url: 'https://picsum.photos/seed/coffee-harvest-uganda/800/600.jpg', category: 'farm', is_active: 1, sort_order: 1 },
-  { id: 2, title: 'Sezibwa Falls', description: 'The iconic waterfall near our farm', image_url: 'https://picsum.photos/seed/sezibwa-falls-close/800/600.jpg', category: 'nature', is_active: 1, sort_order: 2 },
-  { id: 3, title: 'Roasting Process', description: 'Artisan roasting at the RAKI workshop', image_url: 'https://picsum.photos/seed/coffee-roasting-process/800/600.jpg', category: 'process', is_active: 1, sort_order: 3 },
-  { id: 4, title: 'Meraki Trail', description: 'Hikers enjoying the intermediate trail', image_url: 'https://picsum.photos/seed/meraki-trail-hikers/800/600.jpg', category: 'trail', is_active: 1, sort_order: 4 },
-  { id: 5, title: 'Community Program', description: 'Women empowerment through coffee training', image_url: 'https://picsum.photos/seed/women-coffee-training/800/600.jpg', category: 'community', is_active: 1, sort_order: 5 },
-  { id: 6, title: 'The Perfect Cup', description: 'A freshly brewed cup of RAKI Signature', image_url: 'https://picsum.photos/seed/perfect-cup-coffee/800/600.jpg', category: 'product', is_active: 1, sort_order: 6 },
-];
-
-// ========== FOOTER LINKS ==========
-db.footer_links = [
-  { id: 1, category: 'Experiences', label: 'Coffee Experience', href: '#products', sort_order: 1 },
-  { id: 2, category: 'Experiences', label: 'Eco Cycling', href: '#products', sort_order: 2 },
-  { id: 3, category: 'Experiences', label: 'Nature Walks', href: '#products', sort_order: 3 },
-  { id: 4, category: 'Experiences', label: 'Sezibwa & Coffee', href: '#products', sort_order: 4 },
-  { id: 5, category: 'Experiences', label: 'Meraki Trail', href: '#meraki', sort_order: 5 },
-  { id: 6, category: 'Company', label: 'Story', href: '#story', sort_order: 1 },
-  { id: 7, category: 'Company', label: 'Events', href: '#events', sort_order: 2 },
-  { id: 8, category: 'Company', label: 'Impact', href: '#community', sort_order: 3 },
-  { id: 9, category: 'Company', label: 'Partner', href: '#partner', sort_order: 4 },
-  { id: 10, category: 'Company', label: 'Location', href: '#location', sort_order: 5 },
-  { id: 11, category: 'Shop', label: 'Coffee Products', href: '#buy', sort_order: 1 },
-  { id: 12, category: 'Shop', label: 'Subscription', href: '#subscribe', sort_order: 2 },
-  { id: 13, category: 'Shop', label: 'Wholesale', href: '#', sort_order: 3 },
-];
+for (const [collection, defaults] of Object.entries(DEFAULTS)) {
+  const existing = db[collection];
+  if (collection === 'settings') {
+    const existingMap = new Map(existing.map(s => [s.key, s]));
+    const merged = defaults.map(d => {
+      const e = existingMap.get(d.key);
+      return e ? { ...d, value: e.value } : d;
+    });
+    for (const [key, val] of existingMap) {
+      if (!merged.find(s => s.key === key)) merged.push(val);
+    }
+    db.settings = merged;
+  } else {
+    if (!existing || existing.length === 0) {
+      db[collection] = [...defaults];
+    }
+  }
+}
 
 writeDb(db);
 console.log('Database seeded successfully!');

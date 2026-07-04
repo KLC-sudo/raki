@@ -10,13 +10,8 @@ const { getAll, getWhere, findById, insert, update, remove, readDb } = require('
 const { requireAuth } = require('./middleware/auth');
 const { trackVisit, updateSessionTime, getAnalyticsSummary, getRecentVisitors, getVisitorPages } = require('./db/analytics');
 
-// Auto-seed on first run (e.g. Railway deploy)
-const DATA_DIR = path.join(__dirname, 'data');
-const DB_FILE = path.join(DATA_DIR, 'db.json');
-if (!fs.existsSync(DB_FILE)) {
-  console.log('No database found, seeding...');
-  require('./db/seed');
-}
+// Auto-seed on startup — merges defaults with existing data (preserves CMS changes)
+require('./db/seed');
 
 const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
@@ -281,7 +276,7 @@ app.get('/admin', requireAuth, (req, res) => {
     outgrowers: getAll('outgrowers').length,
     gallery: getAll('gallery').length,
   };
-  res.render('admin/dashboard', { settings, counts, csrfToken: req.session.csrfToken });
+  res.render('admin/dashboard', { settings, counts, csrfToken: req.session.csrfToken, siteSettings: settings });
 });
 
 // ========== API: SETTINGS ==========
@@ -443,7 +438,7 @@ function renderAdminSection(collectionName, title) {
     let data = getAll(collectionName);
     if (collectionName === 'navigation') data = data;
     if (collectionName === 'footer_links') data = getAll('footer_links');
-    res.render('admin/section', { sectionKey: collectionName, title, data, csrfToken: req.session.csrfToken });
+    res.render('admin/section', { sectionKey: collectionName, title, data, csrfToken: req.session.csrfToken, siteSettings: getSettings() });
   };
 }
 
@@ -454,7 +449,7 @@ app.get('/admin/settings', requireAuth, (req, res) => {
     if (!grouped[s.category]) grouped[s.category] = [];
     grouped[s.category].push(s);
   });
-  res.render('admin/settings', { grouped, csrfToken: req.session.csrfToken });
+  res.render('admin/settings', { grouped, csrfToken: req.session.csrfToken, siteSettings: getSettings() });
 });
 
 app.get('/admin/products', requireAuth, renderAdminSection('products', 'Products & Experiences'));
@@ -474,7 +469,7 @@ app.get('/admin/analytics', requireAuth, (req, res) => {
   try {
     const summary = getAnalyticsSummary();
     const visitors = getRecentVisitors(50);
-    res.render('admin/analytics', { summary, visitors, csrfToken: req.session.csrfToken });
+    res.render('admin/analytics', { summary, visitors, csrfToken: req.session.csrfToken, siteSettings: getSettings() });
   } catch (e) {
     console.error('Analytics page error:', e);
     res.status(500).render('admin/login', { error: 'Analytics load failed: ' + e.message, csrfToken: req.session ? req.session.csrfToken : '' });

@@ -19,7 +19,7 @@
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h1 class="text-3xl font-black uppercase tracking-tight"><%= title %></h1>
-                    <p class="text-xs font-mono text-[#8B6E3C] mt-1"><%= data.length %> items</p>
+                    <p class="text-xs font-mono text-bark-500 mt-1"><%= data.length %> items</p>
                 </div>
                 <button onclick="openModal()" class="cms-btn cms-btn-primary">Add New</button>
             </div>
@@ -32,7 +32,7 @@
                         <% } %>
                         <div class="flex-1 min-w-0">
                             <h3 class="font-bold uppercase tracking-tight text-sm truncate"><%= item.name || item.label || item.title || 'Untitled' %></h3>
-                            <p class="text-[10px] font-mono text-[#8B6E3C] truncate"><%= item.description || item.value || item.region || item.category || '' %></p>
+                            <p class="text-[10px] font-mono text-bark-500 truncate"><%= item.description || item.value || item.region || item.category || '' %></p>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
                             <% if (typeof item.is_active !== 'undefined') { %>
@@ -54,7 +54,7 @@
             <% if (data.length === 0) { %>
                 <div class="cms-card p-12 text-center">
                     <i data-lucide="inbox" class="w-12 h-12 text-[#6B4E26] mx-auto mb-4"></i>
-                    <p class="text-sm font-bold uppercase tracking-wider text-[#8B6E3C]">No items yet</p>
+                    <p class="text-sm font-bold uppercase tracking-wider text-bark-500">No items yet</p>
                     <p class="text-[10px] font-mono text-[#6B4E26] mt-1">Click "Add New" to create your first item</p>
                 </div>
             <% } %>
@@ -67,7 +67,7 @@
             <div class="flex items-center justify-between mb-6">
                 <h2 id="modal-title" class="text-xl font-black uppercase tracking-tight">Add Item</h2>
                 <button onclick="closeModal()" class="w-8 h-8 border border-[#6B4E26] rounded flex items-center justify-center hover:bg-[#4A3518] transition-colors">
-                    <i data-lucide="x" class="w-4 h-4 text-[#8B6E3C]"></i>
+                    <i data-lucide="x" class="w-4 h-4 text-bark-500"></i>
                 </button>
             </div>
             <form id="item-form" onsubmit="saveItem(event)" class="space-y-4">
@@ -205,7 +205,7 @@
             } else if (f.type === 'checkbox') {
                 html += `<label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="${f.key}" ${val ? 'checked' : ''} class="w-4 h-4 accent-[#C4A87A]">
-                    <span class="text-xs text-[#8B6E3C]">Enable</span>
+                    <span class="text-xs text-bark-500">Enable</span>
                 </label>`;
             } else {
                 html += `<input type="${f.type}" name="${f.key}" value="${isJson}" class="cms-input" ${f.required ? 'required' : ''}>`;

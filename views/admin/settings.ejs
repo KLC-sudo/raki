@@ -19,7 +19,7 @@
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h1 class="text-3xl font-black uppercase tracking-tight">Settings</h1>
-                    <p class="text-xs font-mono text-[#8B6E3C] mt-1">Control every aspect of your site</p>
+                    <p class="text-xs font-mono text-bark-500 mt-1">Control every aspect of your site</p>
                 </div>
                 <button onclick="saveAllSettings()" class="cms-btn cms-btn-primary">Save All</button>
             </div>
@@ -231,15 +231,15 @@
         var setNav = document.getElementById('nav-settings');
         if (visNav && setNav) {
             visNav.classList.remove('bg-[#4A3518]', 'text-[#F5F0E8]');
-            visNav.classList.add('text-[#8B6E3C]');
+            visNav.classList.add('text-bark-500');
             setNav.classList.remove('bg-[#4A3518]', 'text-[#F5F0E8]');
-            setNav.classList.add('text-[#8B6E3C]');
+            setNav.classList.add('text-bark-500');
             if (hash === 'visibility') {
                 visNav.classList.add('bg-[#4A3518]', 'text-[#F5F0E8]');
-                visNav.classList.remove('text-[#8B6E3C]');
+                visNav.classList.remove('text-bark-500');
             } else {
                 setNav.classList.add('bg-[#4A3518]', 'text-[#F5F0E8]');
-                setNav.classList.remove('text-[#8B6E3C]');
+                setNav.classList.remove('text-bark-500');
             }
         }
     }
