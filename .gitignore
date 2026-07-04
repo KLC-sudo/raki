@@ -1,6 +1,5 @@
 node_modules/
-data/db.json
-data/analytics.json
+data/
 public/uploads/
 *.log
 .env

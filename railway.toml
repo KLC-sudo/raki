@@ -3,6 +3,3 @@ startCommand = "npm start"
 
 [[volumes]]
 mountPath = "/app/data"
-
-[[volumes]]
-mountPath = "/app/public/uploads"
