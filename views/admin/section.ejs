@@ -334,7 +334,7 @@
 
         fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'x-csrf-token': document.querySelector('meta[name="csrf-token"]').content },
             credentials: 'include',
             body: JSON.stringify(data)
         })
@@ -349,7 +349,7 @@
 
     function deleteItem(id) {
         if (!confirm('Delete this item?')) return;
-        fetch(`${apiUrl}/${id}`, { method: 'DELETE', credentials: 'include' })
+        fetch(`${apiUrl}/${id}`, { method: 'DELETE', credentials: 'include', headers: { 'x-csrf-token': document.querySelector('meta[name="csrf-token"]').content } })
         .then(r => r.json())
         .then(d => {
             showToast('Item deleted!');
