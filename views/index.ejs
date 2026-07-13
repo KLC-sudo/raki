@@ -162,7 +162,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <% products.forEach(function(product, i) { %>
-                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden cursor-pointer" onclick="openProductModal(<%= JSON.stringify(product).replace(/"/g, '&quot;') %>)">
                         <div class="h-56 overflow-hidden border-b-2 border-bark-700">
                             <img src="<%= product.image_url %>" alt="<%= product.name %>" class="w-full h-full object-cover">
                         </div>
@@ -674,6 +674,20 @@
         </div>
     </footer>
 
+    <!-- PRODUCT DETAIL MODAL -->
+    <div id="product-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-bark-900/60 backdrop-blur-sm" onclick="closeProductModal()"></div>
+        <div id="product-modal-panel" class="absolute bottom-0 left-0 right-0 md:bottom-auto md:top-0 md:right-0 md:left-auto md:w-[480px] md:h-full bg-cream border-t-2 md:border-t-0 md:border-l-2 border-bark-700 shadow-2xl transform translate-y-full md:translate-y-0 md:translate-x-full transition-transform duration-300 ease-out overflow-y-auto">
+            <div class="sticky top-0 z-10 bg-cream border-b-2 border-bark-700 px-6 py-4 flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Details</span>
+                <button onclick="closeProductModal()" class="w-10 h-10 bg-bark-700 rounded-md flex items-center justify-center hover:bg-bark-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5 text-sand"></i>
+                </button>
+            </div>
+            <div id="product-modal-content" class="p-6"></div>
+        </div>
+    </div>
+
     <!-- TOAST -->
     <div id="toast" class="fixed bottom-6 left-6 z-50 transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none">
         <div class="bg-bark-700 text-sand px-6 py-4 border-2 border-bark-600 rounded-md flex items-center gap-3 max-w-sm">
@@ -702,6 +716,75 @@
             timer = setTimeout(function() { clicks = 0; if (btn) { btn.style.opacity = '0.2'; btn.style.cursor = 'default'; } }, 2000);
         };
     })();
+    </script>
+    <script>
+    function openProductModal(product) {
+        var modal = document.getElementById('product-modal');
+        var panel = document.getElementById('product-modal-panel');
+        var content = document.getElementById('product-modal-content');
+        var features = [];
+        if (product.category === 'coffee') {
+            features = product.description.split('·').map(function(s) { return s.trim(); }).filter(Boolean);
+        }
+        var html = '<div class="border-2 border-bark-700 rounded-lg overflow-hidden mb-6">' +
+            '<img src="' + product.image_url + '" alt="' + product.name + '" class="w-full h-64 object-cover">' +
+            '</div>' +
+            '<div class="flex items-center gap-2 mb-4">' +
+            '<span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 bg-bark-50 border border-bark-200 px-2 py-1 rounded">' + product.badge + '</span>' +
+            '<span class="text-[9px] font-mono text-bark-400 uppercase">' + product.category + '</span>' +
+            '</div>' +
+            '<h2 class="text-3xl font-black tracking-tighter uppercase mb-4">' + product.name + '</h2>' +
+            '<p class="text-sm text-bark-500 leading-relaxed mb-6">' + product.description + '</p>';
+        if (product.price) {
+            html += '<div class="border-2 border-bark-700 rounded-lg p-5 mb-6">' +
+                '<div class="flex items-center justify-between">' +
+                '<div>' +
+                '<span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 block mb-1">Price</span>' +
+                '<span class="text-3xl font-black">$' + product.price + '</span>' +
+                '</div>' +
+                '<button onclick="addCart(\'' + product.name + '\')" class="bg-bark-700 text-sand font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Add to Cart</button>' +
+                '</div></div>';
+        }
+        if (product.category === 'coffee' && features.length) {
+            html += '<div class="mb-6">' +
+                '<span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 block mb-3">Tasting Notes</span>' +
+                '<div class="flex flex-wrap gap-2">' +
+                features.map(function(f) { return '<span class="text-xs font-mono text-bark-600 bg-bark-50 border border-bark-200 px-3 py-1.5 rounded">' + f + '</span>'; }).join('') +
+                '</div></div>';
+        }
+        html += '<div class="border-t-2 border-bark-200 pt-6 mt-6">' +
+            '<span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 block mb-3">What to Expect</span>' +
+            '<ul class="space-y-2">' +
+            '<li class="flex items-center gap-2 text-sm text-bark-600"><span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Authentic Ugandan experience</li>' +
+            '<li class="flex items-center gap-2 text-sm text-bark-600"><span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Expert-guided activity</li>' +
+            '<li class="flex items-center gap-2 text-sm text-bark-600"><span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Support local community</li>' +
+            '</ul></div>' +
+            '<div class="mt-8 flex gap-3">' +
+            '<a href="#subscribe" onclick="closeProductModal()" class="flex-1 text-center bg-sand text-bark-700 font-bold text-xs uppercase tracking-wider py-3.5 rounded-md border-2 border-sand hover:bg-transparent hover:text-sand transition-colors">Subscribe & Save</a>' +
+            '<a href="#buy" onclick="closeProductModal()" class="flex-1 text-center bg-transparent text-bark-700 font-bold text-xs uppercase tracking-wider py-3.5 rounded-md border-2 border-bark-700 hover:bg-bark-700 hover:text-sand transition-colors">Shop Now</a>' +
+            '</div>';
+        content.innerHTML = html;
+        lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+        modal.classList.remove('hidden');
+        requestAnimationFrame(function() {
+            panel.classList.remove('translate-y-full', 'md:translate-x-full');
+        });
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeProductModal() {
+        var modal = document.getElementById('product-modal');
+        var panel = document.getElementById('product-modal-panel');
+        panel.classList.add('translate-y-full', 'md:translate-x-full');
+        setTimeout(function() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }, 300);
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeProductModal();
+    });
     </script>
 </body>
 </html>
