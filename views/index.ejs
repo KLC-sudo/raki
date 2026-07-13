@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth overflow-x-hidden">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +24,7 @@
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body class="bg-cream text-bark-700 antialiased">
+<body class="bg-cream text-bark-700 antialiased overflow-x-hidden">
 
     <!-- NAVIGATION -->
     <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-cream border-b-2 border-bark-700">
@@ -155,24 +155,24 @@
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
                 <div>
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_products_label %></span>
-                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_products_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_products_title.replace(/\n/g, '<br>') %></h2>
                 </div>
                 <p class="text-sm text-bark-500 max-w-sm leading-relaxed"><%= settings.section_products_description %></p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <% products.forEach(function(product, i) { %>
-                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden <%= product.badge === 'Featured' ? 'bg-bark-700 border-bark-700 hard-shadow-white' : '' %>">
-                        <div class="h-56 overflow-hidden border-b-2 <%= product.badge === 'Featured' ? 'border-bark-600' : 'border-bark-700' %>">
-                            <img src="<%= product.image_url %>" alt="<%= product.name %>" class="w-full h-full object-cover <%= product.badge === 'Featured' ? 'opacity-70' : '' %>">
+                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden">
+                        <div class="h-56 overflow-hidden border-b-2 border-bark-700">
+                            <img src="<%= product.image_url %>" alt="<%= product.name %>" class="w-full h-full object-cover">
                         </div>
                         <div class="p-5">
                             <div class="flex items-center justify-between mb-3">
-                                <span class="text-[9px] font-mono font-bold uppercase tracking-widest <%= product.badge === 'Featured' ? 'text-bark-300 bg-bark-600 border border-bark-500' : 'text-bark-400 bg-bark-50 border border-bark-200' %> px-2 py-1 rounded"><%= product.badge %></span>
-                                <span class="text-[9px] font-mono <%= product.badge === 'Featured' ? 'text-bark-400' : 'text-bark-400' %>"><%= String(i + 1).padStart(2, '0') %></span>
+                                <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 bg-bark-50 border border-bark-200 px-2 py-1 rounded"><%= product.badge %></span>
+                                <span class="text-[9px] font-mono text-bark-400"><%= String(i + 1).padStart(2, '0') %></span>
                             </div>
-                            <h3 class="text-xl font-black tracking-tight uppercase mb-2 <%= product.badge === 'Featured' ? 'text-sand' : '' %>"><%= product.name %></h3>
-                            <p class="text-sm <%= product.badge === 'Featured' ? 'text-bark-300' : 'text-bark-500' %> leading-relaxed"><%= product.description %></p>
+                            <h3 class="text-xl font-black tracking-tight uppercase mb-2"><%= product.name %></h3>
+                            <p class="text-sm text-bark-500 leading-relaxed"><%= product.description %></p>
                         </div>
                     </div>
                 <% }); %>
@@ -187,7 +187,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="mb-14">
                 <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_trail_label %></span>
-                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_trail_title.replace('\n', '<br>') %></h2>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_trail_title.replace(/\n/g, '<br>') %></h2>
                 <p class="text-sm text-bark-300 max-w-lg mt-4 leading-relaxed font-mono"><%= settings.section_trail_description %></p>
             </div>
 
@@ -253,7 +253,7 @@
 
                 <div class="lg:pt-8">
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_story_label %></span>
-                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%= settings.section_story_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%- settings.section_story_title.replace(/\n/g, '<br>') %></h2>
                     <div class="border-l-4 border-bark-700 pl-5 mb-6">
                         <p class="text-bark-500 leading-relaxed"><%= settings.section_story_quote %></p>
                     </div>
@@ -276,7 +276,7 @@
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
                 <div>
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_events_label %></span>
-                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_events_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_events_title.replace(/\n/g, '<br>') %></h2>
                 </div>
                 <p class="text-sm text-bark-300 max-w-sm leading-relaxed"><%= settings.section_events_description %></p>
             </div>
@@ -306,7 +306,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center max-w-2xl mx-auto mb-14">
                 <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_partner_label %></span>
-                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_partner_title.replace('\n', '<br>') %></h2>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_partner_title.replace(/\n/g, '<br>') %></h2>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -334,7 +334,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="mb-14">
                 <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_community_label %></span>
-                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_community_title.replace('\n', '<br>') %></h2>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_community_title.replace(/\n/g, '<br>') %></h2>
             </div>
 
             <div class="grid lg:grid-cols-3 gap-6 mb-14">
@@ -377,7 +377,7 @@
             <div class="grid lg:grid-cols-2 gap-12 items-start">
                 <div>
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_subscribe_label %></span>
-                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%= settings.section_subscribe_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%- settings.section_subscribe_title.replace(/\n/g, '<br>') %></h2>
                     <p class="text-sm text-bark-300 max-w-md leading-relaxed mb-10"><%= settings.section_subscribe_description %></p>
 
                     <div class="space-y-3">
@@ -467,7 +467,7 @@
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
                 <div>
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_buy_label %></span>
-                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_buy_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_buy_title.replace(/\n/g, '<br>') %></h2>
                 </div>
                 <p class="text-sm text-bark-500 max-w-sm leading-relaxed"><%= settings.section_buy_description %></p>
             </div>
@@ -583,7 +583,7 @@
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
                 <div>
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_gallery_label %></span>
-                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_gallery_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_gallery_title.replace(/\n/g, '<br>') %></h2>
                 </div>
                 <p class="text-sm text-bark-300 max-w-sm leading-relaxed"><%= settings.section_gallery_description %></p>
             </div>
