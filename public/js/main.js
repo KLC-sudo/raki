@@ -62,3 +62,40 @@ document.querySelectorAll('section').forEach(s => {
 });
 document.getElementById('hero').style.opacity = '1';
 document.getElementById('hero').style.transform = 'translateY(0)';
+
+function openDetailModal(data) {
+    var modal = document.getElementById('detail-modal');
+    document.getElementById('detail-modal-img').src = data.image || '';
+    document.getElementById('detail-modal-img').alt = data.title || '';
+    document.getElementById('detail-modal-title').textContent = data.title || '';
+    document.getElementById('detail-modal-desc').querySelector('p').textContent = data.description || '';
+
+    var badge = document.getElementById('detail-modal-badge');
+    if (data.badge) {
+        badge.textContent = data.badge;
+        badge.style.display = '';
+    } else {
+        badge.style.display = 'none';
+    }
+
+    var detailsEl = document.getElementById('detail-modal-details');
+    if (data.details) {
+        detailsEl.textContent = data.details;
+        detailsEl.style.display = '';
+    } else {
+        detailsEl.style.display = 'none';
+    }
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+}
+
+function closeDetailModal() {
+    document.getElementById('detail-modal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeDetailModal();
+});
