@@ -1,39 +1,42 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth overflow-x-hidden">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= settings.site_name %> — Meraki</title>
+    <meta name="csrf-token" content="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+    <% if (typeof visitorId !== 'undefined' && visitorId) { %>
+    <meta name="visitor-id" content="<%= visitorId %>">
+    <% } %>
+    <title>RAKI Coffee Co. — Meraki</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="/css/tailwind.css">
     <style>
         :root {
             --theme-bark-700: <%= settings.color_primary %>;
+            --theme-bark-600: <%= settings.color_text %>;
+            --theme-bark-400: <%= settings.color_border %>;
             --theme-sand: <%= settings.color_accent %>;
             --theme-cream: <%= settings.color_bg %>;
+            --theme-color-text-muted: <%= settings.color_text_muted %>;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght<%= settings.heading_weight === '900' ? '/300;400;500;600;700;800;900' : '' %>&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body class="bg-cream text-bark-700 antialiased">
+<body class="bg-cream text-bark-700 antialiased overflow-x-hidden">
 
     <!-- NAVIGATION -->
     <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-cream border-b-2 border-bark-700">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <a href="#hero" class="flex items-center gap-3">
                 <% if (settings.site_logo) { %>
-                    <img src="<%= settings.site_logo %>" alt="<%= settings.site_name %>" class="h-10 w-auto">
+                    <img src="<%= settings.site_logo %>" alt="RAKI" class="w-auto" style="height: <%= settings.logo_size || 40 %>px;">
                 <% } else { %>
-                    <div class="w-10 h-10 bg-bark-700 rounded-md flex items-center justify-center">
+                    <div style="height: <%= settings.logo_size || 40 %>px; width: <%= settings.logo_size || 40 %>px;" class="bg-bark-700 rounded-md flex items-center justify-center">
                         <i data-lucide="coffee" class="w-5 h-5 text-sand"></i>
                     </div>
                 <% } %>
-                <div>
-                    <span class="text-xl font-black tracking-tight text-bark-700 uppercase"><%= settings.site_name.replace(' Coffee Co.', '').replace(' Co.', '') %></span>
-                    <span class="block text-[9px] font-mono font-bold tracking-[0.25em] text-bark-400 uppercase -mt-0.5">coffee co.</span>
-                </div>
             </a>
 
             <div class="hidden md:flex items-center gap-1">
@@ -152,26 +155,25 @@
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
                 <div>
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_products_label %></span>
-                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_products_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_products_title.replace(/\n/g, '<br>') %></h2>
                 </div>
                 <p class="text-sm text-bark-500 max-w-sm leading-relaxed"><%= settings.section_products_description %></p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <% products.forEach(function(product, i) { %>
-                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden cursor-pointer <%= product.badge === 'Featured' ? 'bg-bark-700 border-bark-700 hard-shadow-white' : '' %>"
-                         onclick="openDetailModal({ title: '<%= product.name.replace(/'/g, "\\'") %>', description: '<%= product.description.replace(/'/g, "\\'") %>', details: '<%= (product.details || "").replace(/'/g, "\\'").replace(/\n/g, " ") %>', image: '<%= product.image_url %>', badge: '<%= product.badge %>' })">
-                        <div class="h-56 overflow-hidden border-b-2 <%= product.badge === 'Featured' ? 'border-bark-600' : 'border-bark-700' %>">
-                            <img src="<%= product.image_url %>" alt="<%= product.name %>" class="w-full h-full object-cover <%= product.badge === 'Featured' ? 'opacity-70' : '' %>">
+                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden cursor-pointer" onclick="openProductModal(<%= JSON.stringify(product).replace(/"/g, '&quot;') %>)">
+                        <div class="h-56 overflow-hidden border-b-2 border-bark-700">
+                            <img src="<%= product.image_url %>" alt="<%= product.name %>" class="w-full h-full object-cover">
                         </div>
                         <div class="p-5">
                             <div class="flex items-center justify-between mb-3">
-                                <span class="text-[9px] font-mono font-bold uppercase tracking-widest <%= product.badge === 'Featured' ? 'text-bark-300 bg-bark-600 border border-bark-500' : 'text-bark-400 bg-bark-50 border border-bark-200' %> px-2 py-1 rounded"><%= product.badge %></span>
-                                <span class="text-[9px] font-mono <%= product.badge === 'Featured' ? 'text-bark-400' : 'text-bark-400' %>"><%= String(i + 1).padStart(2, '0') %></span>
+                                <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 bg-bark-50 border border-bark-200 px-2 py-1 rounded"><%= product.badge %></span>
+                                <span class="text-[9px] font-mono text-bark-400"><%= String(i + 1).padStart(2, '0') %></span>
                             </div>
-                            <h3 class="text-xl font-black tracking-tight uppercase mb-2 <%= product.badge === 'Featured' ? 'text-sand' : '' %>"><%= product.name %></h3>
-                            <p class="text-sm <%= product.badge === 'Featured' ? 'text-bark-300' : 'text-bark-500' %> leading-relaxed"><%= product.description %></p>
-                            <div class="mt-4 flex items-center gap-1.5 <%= product.badge === 'Featured' ? 'text-bark-300' : 'text-bark-700' %>">
+                            <h3 class="text-xl font-black tracking-tight uppercase mb-2"><%= product.name %></h3>
+                            <p class="text-sm text-bark-500 leading-relaxed"><%= product.description %></p>
+                            <div class="mt-4 flex items-center gap-1.5 text-bark-700">
                                 <span class="text-[10px] font-mono font-bold uppercase tracking-wider">Learn More</span>
                                 <i data-lucide="arrow-right" class="w-3 h-3"></i>
                             </div>
@@ -189,7 +191,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="mb-14">
                 <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_trail_label %></span>
-                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_trail_title.replace('\n', '<br>') %></h2>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_trail_title.replace(/\n/g, '<br>') %></h2>
                 <p class="text-sm text-bark-300 max-w-lg mt-4 leading-relaxed font-mono"><%= settings.section_trail_description %></p>
             </div>
 
@@ -255,7 +257,7 @@
 
                 <div class="lg:pt-8">
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_story_label %></span>
-                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%= settings.section_story_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%- settings.section_story_title.replace(/\n/g, '<br>') %></h2>
                     <div class="border-l-4 border-bark-700 pl-5 mb-6">
                         <p class="text-bark-500 leading-relaxed"><%= settings.section_story_quote %></p>
                     </div>
@@ -278,7 +280,7 @@
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
                 <div>
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_events_label %></span>
-                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_events_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_events_title.replace(/\n/g, '<br>') %></h2>
                 </div>
                 <p class="text-sm text-bark-300 max-w-sm leading-relaxed"><%= settings.section_events_description %></p>
             </div>
@@ -308,7 +310,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center max-w-2xl mx-auto mb-14">
                 <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_partner_label %></span>
-                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_partner_title.replace('\n', '<br>') %></h2>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_partner_title.replace(/\n/g, '<br>') %></h2>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -336,7 +338,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="mb-14">
                 <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_community_label %></span>
-                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_community_title.replace('\n', '<br>') %></h2>
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_community_title.replace(/\n/g, '<br>') %></h2>
             </div>
 
             <div class="grid lg:grid-cols-3 gap-6 mb-14">
@@ -383,7 +385,7 @@
             <div class="grid lg:grid-cols-2 gap-12 items-start">
                 <div>
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_subscribe_label %></span>
-                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%= settings.section_subscribe_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] mb-6"><%- settings.section_subscribe_title.replace(/\n/g, '<br>') %></h2>
                     <p class="text-sm text-bark-300 max-w-md leading-relaxed mb-10"><%= settings.section_subscribe_description %></p>
 
                     <div class="space-y-3">
@@ -456,7 +458,7 @@
                         <div class="w-16 h-16 bg-bark-700 rounded-lg flex items-center justify-center mx-auto mb-4">
                             <i data-lucide="check" class="w-8 h-8 text-sand"></i>
                         </div>
-                        <h4 class="text-xl font-black uppercase tracking-tight mb-1">Welcome to <%= settings.site_name.replace(' Coffee Co.', '').replace(' Co.', '') %>!</h4>
+                        <h4 class="text-xl font-black uppercase tracking-tight mb-1">Welcome to RAKI!</h4>
                         <p class="text-xs text-bark-400 font-mono">Your first box is on its way. Check your email.</p>
                     </div>
                     <p class="text-[9px] font-mono text-bark-400 mt-4 text-center uppercase tracking-wider">Cancel anytime · Free shipping · 100% guaranteed</p>
@@ -473,7 +475,7 @@
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
                 <div>
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_buy_label %></span>
-                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_buy_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_buy_title.replace(/\n/g, '<br>') %></h2>
                 </div>
                 <p class="text-sm text-bark-500 max-w-sm leading-relaxed"><%= settings.section_buy_description %></p>
             </div>
@@ -511,13 +513,13 @@
                     <p class="text-sm text-bark-500 leading-relaxed mb-8"><%= settings.section_location_description %></p>
 
                     <div class="border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden mb-8 h-72 relative bg-bark-100">
-                        <img src="https://picsum.photos/seed/uganda-landscape-green/700/350.jpg" alt="Location" class="w-full h-full object-cover opacity-60">
+                        <img src="<%= settings.section_location_image || 'https://picsum.photos/seed/uganda-landscape-green/700/350.jpg' %>" alt="Location" class="w-full h-full object-cover opacity-60">
                         <div class="absolute inset-0 flex items-center justify-center">
                             <div class="text-center">
                                 <div class="w-14 h-14 bg-bark-700 rounded-md flex items-center justify-center mx-auto mb-2">
                                     <i data-lucide="map-pin" class="w-7 h-7 text-sand"></i>
                                 </div>
-                                <p class="text-sm font-black uppercase text-bark-700"><%= settings.site_name %></p>
+                                <p class="text-sm font-black uppercase text-bark-700">RAKI Coffee Co.</p>
                                 <p class="text-[9px] font-mono text-bark-500">Near Sezibwa Falls, Mukono</p>
                             </div>
                         </div>
@@ -589,7 +591,7 @@
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
                 <div>
                     <span class="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-bark-400 mb-3 block"><%= settings.section_gallery_label %></span>
-                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%= settings.section_gallery_title.replace('\n', '<br>') %></h2>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]"><%- settings.section_gallery_title.replace(/\n/g, '<br>') %></h2>
                 </div>
                 <p class="text-sm text-bark-300 max-w-sm leading-relaxed"><%= settings.section_gallery_description %></p>
             </div>
@@ -639,23 +641,19 @@
                 <div class="col-span-2">
                     <div class="flex items-center gap-3 mb-4">
                         <% if (settings.site_logo) { %>
-                            <img src="<%= settings.site_logo %>" alt="<%= settings.site_name %>" class="h-10 w-auto">
+                            <img src="<%= settings.site_logo %>" alt="RAKI" class="w-auto" style="height: <%= settings.logo_size || 40 %>px;">
                         <% } else { %>
-                            <div class="w-10 h-10 bg-sand rounded-md flex items-center justify-center">
+                            <div style="height: <%= settings.logo_size || 40 %>px; width: <%= settings.logo_size || 40 %>px;" class="bg-sand rounded-md flex items-center justify-center">
                                 <i data-lucide="coffee" class="w-5 h-5 text-bark-700"></i>
                             </div>
                         <% } %>
-                        <div>
-                            <span class="text-xl font-black tracking-tight text-sand uppercase"><%= settings.site_name.replace(' Coffee Co.', '').replace(' Co.', '') %></span>
-                            <span class="block text-[8px] font-mono font-bold tracking-[0.3em] text-bark-400 uppercase -mt-0.5">coffee co.</span>
-                        </div>
                     </div>
                     <p class="text-xs text-bark-500 leading-relaxed mb-4 max-w-xs font-mono"><%= settings.site_tagline %> — <%= settings.site_description %></p>
                     <div class="flex gap-2">
-                        <a href="<%= settings.social_instagram %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="instagram" class="w-3.5 h-3.5"></i></a>
-                        <a href="<%= settings.social_twitter %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="twitter" class="w-3.5 h-3.5"></i></a>
-                        <a href="<%= settings.social_facebook %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="facebook" class="w-3.5 h-3.5"></i></a>
-                        <a href="<%= settings.social_youtube %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="youtube" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_instagram %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="camera" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_twitter %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_facebook %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="users" class="w-3.5 h-3.5"></i></a>
+                        <a href="<%= settings.social_youtube %>" class="w-8 h-8 border border-bark-600 rounded flex items-center justify-center hover:bg-sand hover:text-bark-700 hover:border-sand transition-colors"><i data-lucide="play" class="w-3.5 h-3.5"></i></a>
                     </div>
                 </div>
 
@@ -674,13 +672,29 @@
             <div class="border-t-2 border-bark-700 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="text-[9px] font-mono text-bark-600 uppercase tracking-wider">© <%= settings.copyright %></p>
                 <div class="flex items-center gap-4">
-                    <p class="text-[9px] font-mono text-bark-600"><%= settings.site_ceo %></p>
-                    <span class="text-bark-700">|</span>
                     <p class="text-[9px] font-mono text-bark-600"><%= settings.site_phone %></p>
+                    <span class="text-bark-700">|</span>
+                    <button id="admin-triple" onclick="adminTripleClick()" class="text-[8px] font-mono text-bark-700 opacity-20 hover:opacity-60 transition-opacity cursor-default select-none" title="·">
+                        ·
+                    </button>
                 </div>
             </div>
         </div>
     </footer>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div id="product-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-bark-900/60 backdrop-blur-sm" onclick="closeProductModal()"></div>
+        <div id="product-modal-panel" class="absolute bottom-0 left-0 right-0 md:bottom-auto md:top-0 md:right-0 md:left-auto md:w-[480px] md:h-full bg-cream border-t-2 md:border-t-0 md:border-l-2 border-bark-700 shadow-2xl transform translate-y-full md:translate-y-0 md:translate-x-full transition-transform duration-300 ease-out overflow-y-auto">
+            <div class="sticky top-0 z-10 bg-cream border-b-2 border-bark-700 px-6 py-4 flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400">Details</span>
+                <button onclick="closeProductModal()" class="w-10 h-10 bg-bark-700 rounded-md flex items-center justify-center hover:bg-bark-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5 text-sand"></i>
+                </button>
+            </div>
+            <div id="product-modal-content" class="p-6"></div>
+        </div>
+    </div>
 
     <!-- TOAST -->
     <div id="toast" class="fixed bottom-6 left-6 z-50 transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none">
@@ -711,5 +725,94 @@
     </div>
 
     <script src="/js/main.js"></script>
+    <script>
+    (function() {
+        var clicks = 0;
+        var timer = null;
+        window.adminTripleClick = function() {
+            clicks++;
+            if (clicks >= 3) {
+                window.location.href = '/admin/login';
+                return;
+            }
+            var btn = document.getElementById('admin-triple');
+            if (btn) {
+                btn.style.opacity = String(0.2 + clicks * 0.25);
+                btn.style.cursor = 'pointer';
+            }
+            clearTimeout(timer);
+            timer = setTimeout(function() { clicks = 0; if (btn) { btn.style.opacity = '0.2'; btn.style.cursor = 'default'; } }, 2000);
+        };
+    })();
+    </script>
+    <script>
+    function openProductModal(product) {
+        var modal = document.getElementById('product-modal');
+        var panel = document.getElementById('product-modal-panel');
+        var content = document.getElementById('product-modal-content');
+        var features = [];
+        if (product.category === 'coffee') {
+            features = product.description.split('·').map(function(s) { return s.trim(); }).filter(Boolean);
+        }
+        var html = '<div class="border-2 border-bark-700 rounded-lg overflow-hidden mb-6">' +
+            '<img src="' + product.image_url + '" alt="' + product.name + '" class="w-full h-64 object-cover">' +
+            '</div>' +
+            '<div class="flex items-center gap-2 mb-4">' +
+            '<span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 bg-bark-50 border border-bark-200 px-2 py-1 rounded">' + product.badge + '</span>' +
+            '<span class="text-[9px] font-mono text-bark-400 uppercase">' + product.category + '</span>' +
+            '</div>' +
+            '<h2 class="text-3xl font-black tracking-tighter uppercase mb-4">' + product.name + '</h2>' +
+            '<p class="text-sm text-bark-500 leading-relaxed mb-6">' + product.description + '</p>';
+        if (product.price) {
+            html += '<div class="border-2 border-bark-700 rounded-lg p-5 mb-6">' +
+                '<div class="flex items-center justify-between">' +
+                '<div>' +
+                '<span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 block mb-1">Price</span>' +
+                '<span class="text-3xl font-black">$' + product.price + '</span>' +
+                '</div>' +
+                '<button onclick="addCart(\'' + product.name + '\')" class="bg-bark-700 text-sand font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-md border-2 border-bark-700 hover:bg-transparent hover:text-bark-700 transition-colors">Add to Cart</button>' +
+                '</div></div>';
+        }
+        if (product.category === 'coffee' && features.length) {
+            html += '<div class="mb-6">' +
+                '<span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 block mb-3">Tasting Notes</span>' +
+                '<div class="flex flex-wrap gap-2">' +
+                features.map(function(f) { return '<span class="text-xs font-mono text-bark-600 bg-bark-50 border border-bark-200 px-3 py-1.5 rounded">' + f + '</span>'; }).join('') +
+                '</div></div>';
+        }
+        html += '<div class="border-t-2 border-bark-200 pt-6 mt-6">' +
+            '<span class="text-[9px] font-mono font-bold uppercase tracking-widest text-bark-400 block mb-3">What to Expect</span>' +
+            '<ul class="space-y-2">' +
+            '<li class="flex items-center gap-2 text-sm text-bark-600"><span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Authentic Ugandan experience</li>' +
+            '<li class="flex items-center gap-2 text-sm text-bark-600"><span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Expert-guided activity</li>' +
+            '<li class="flex items-center gap-2 text-sm text-bark-600"><span class="w-1.5 h-1.5 bg-bark-700 rounded-full flex-shrink-0"></span> Support local community</li>' +
+            '</ul></div>' +
+            '<div class="mt-8 flex gap-3">' +
+            '<a href="#subscribe" onclick="closeProductModal()" class="flex-1 text-center bg-sand text-bark-700 font-bold text-xs uppercase tracking-wider py-3.5 rounded-md border-2 border-sand hover:bg-transparent hover:text-sand transition-colors">Subscribe & Save</a>' +
+            '<a href="#buy" onclick="closeProductModal()" class="flex-1 text-center bg-transparent text-bark-700 font-bold text-xs uppercase tracking-wider py-3.5 rounded-md border-2 border-bark-700 hover:bg-bark-700 hover:text-sand transition-colors">Shop Now</a>' +
+            '</div>';
+        content.innerHTML = html;
+        lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+        modal.classList.remove('hidden');
+        requestAnimationFrame(function() {
+            panel.classList.remove('translate-y-full', 'md:translate-x-full');
+        });
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeProductModal() {
+        var modal = document.getElementById('product-modal');
+        var panel = document.getElementById('product-modal-panel');
+        panel.classList.add('translate-y-full', 'md:translate-x-full');
+        setTimeout(function() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }, 300);
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeProductModal();
+    });
+    </script>
 </body>
 </html>
