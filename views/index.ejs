@@ -3,10 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
-    <% if (typeof visitorId !== 'undefined' && visitorId) { %>
-    <meta name="visitor-id" content="<%= visitorId %>">
-    <% } %>
     <title>RAKI Coffee Co. — Meraki</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="/css/tailwind.css">
@@ -162,7 +158,9 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <% products.forEach(function(product, i) { %>
-                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden cursor-pointer" onclick="openProductModal(<%= JSON.stringify(product).replace(/"/g, '&quot;') %>)">
+                    <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden cursor-pointer"
+                         data-product="<%- encodeURIComponent(JSON.stringify(product)) %>"
+                         onclick="openProductModal(JSON.parse(decodeURIComponent(this.dataset.product)))">
                         <div class="h-56 overflow-hidden border-b-2 border-bark-700">
                             <img src="<%= product.image_url %>" alt="<%= product.name %>" class="w-full h-full object-cover">
                         </div>
@@ -344,7 +342,8 @@
             <div class="grid lg:grid-cols-3 gap-6 mb-14">
                 <% programs.forEach(function(program, i) { %>
                     <div class="card-hover bg-white border-2 border-bark-700 rounded-lg hard-shadow-sm overflow-hidden cursor-pointer"
-                         onclick="openDetailModal({ title: '<%= program.title.replace(/'/g, "\\'") %>', description: '<%= program.description.replace(/'/g, "\\'") %>', details: '<%= (program.details || "").replace(/'/g, "\\'").replace(/\n/g, " ") %>', image: '<%= program.image_url %>', icon: '<%= program.icon %>' })">
+                         data-program="<%- encodeURIComponent(JSON.stringify({ title: program.title, description: program.description, details: program.details || '', image: program.image_url, icon: program.icon })) %>"
+                         onclick="openDetailModal(JSON.parse(decodeURIComponent(this.dataset.program)))">
                         <div class="h-64 overflow-hidden border-b-2 border-bark-700">
                             <img src="<%= program.image_url %>" alt="<%= program.title %>" class="w-full h-full object-cover">
                         </div>
@@ -762,7 +761,12 @@
             '<span class="text-[9px] font-mono text-bark-400 uppercase">' + product.category + '</span>' +
             '</div>' +
             '<h2 class="text-3xl font-black tracking-tighter uppercase mb-4">' + product.name + '</h2>' +
-            '<p class="text-sm text-bark-500 leading-relaxed mb-6">' + product.description + '</p>';
+            '<p class="text-sm text-bark-500 leading-relaxed mb-4">' + product.description + '</p>';
+        if (product.details) {
+            html += '<div class="border-l-4 border-bark-700 pl-5 mb-6">' +
+                '<p class="text-sm text-bark-500 leading-relaxed">' + product.details + '</p>' +
+                '</div>';
+        }
         if (product.price) {
             html += '<div class="border-2 border-bark-700 rounded-lg p-5 mb-6">' +
                 '<div class="flex items-center justify-between">' +
